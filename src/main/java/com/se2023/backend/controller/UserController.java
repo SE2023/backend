@@ -1,6 +1,6 @@
 package com.se2023.backend.controller;
 
-import com.se2023.backend.entity.User;
+import com.se2023.backend.entity.User.Consumer;
 import com.se2023.backend.mapper.UserMapper;
 import com.se2023.backend.utils.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public JsonResult addUser(@RequestBody User user){
-        try{
+    public JsonResult addUser(@RequestBody Consumer user){
+        try {
             userMapper.addUser(user);
             return new JsonResult(0, user, "添加成功", "success");
         } catch (Exception e) {

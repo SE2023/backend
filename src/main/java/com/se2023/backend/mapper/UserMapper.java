@@ -1,6 +1,6 @@
 package com.se2023.backend.mapper;
 
-import com.se2023.backend.entity.User;
+import com.se2023.backend.entity.User.Consumer;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -9,14 +9,14 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     @Select("select * from user where username = #{username}")
-    User queryUserByUsername(String username);
+    Consumer queryUserByUsername(String username);
 
     @Select("select * from user where id = #{id}")
-    User queryUserById(Integer id);
+    Consumer queryUserById(Integer id);
 
     @Select("select * from user")
-    List<User> queryAllUser();
+    List<Consumer> queryAllUser();
 
-    @Select("insert into user (username, password) values (#{username}, #{password})")
-    void addUser(User user);
+     @Select("insert into user (username, password, role) values (#{username}, #{password}, #{role})")
+     void addUser(Consumer user);
 }

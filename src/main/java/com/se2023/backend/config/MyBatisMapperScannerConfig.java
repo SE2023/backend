@@ -14,7 +14,7 @@ public class MyBatisMapperScannerConfig {
 
         //com.example.demo.dal.mapper 这个包名是所有的Mapper.java文件所在的路径，该包下面的子包里面的文件同样会扫描到。
         //此包名与具体的应用的名称相关
-        mapperScannerConfigurer.setBasePackage("com.example.demo.Mapper");
+        mapperScannerConfigurer.setBasePackage("com.se2023.backend.mapper");
 
         return mapperScannerConfigurer;
     }
