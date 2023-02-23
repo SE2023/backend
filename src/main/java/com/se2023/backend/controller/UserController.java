@@ -1,6 +1,7 @@
 package com.se2023.backend.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.se2023.backend.entity.Email;
 import com.se2023.backend.entity.User;
 import com.se2023.backend.mapper.EmailMapper;
@@ -61,7 +62,8 @@ public class UserController {
             return new JsonResult(400,null,"Invalid username","failed");
         }
         //检查密码是否正确
-        if(user.getPassword().equals(userSubmit.getPassword())){
+        String code_password = SecureUtil.md5(userSubmit.getPassword());
+        if(user.getPassword().equals(code_password)){
             if(user.getRole().equals("Consumer")){
                 return new JsonResult(500,user.getUsername(),"Consumer login","success");
             }else if(user.getRole().equals("Staff")){
@@ -131,8 +133,8 @@ public class UserController {
         }
         try{
             //加密密码
-            //String password= SecureUtil.md5(user.getPassword());
-            //user.setPassword(password);
+            String code_password = SecureUtil.md5(user.getPassword());
+            user.setPassword(code_password);
             user.setRole("Consumer");
             userMapper.addUser(user);
             return new JsonResult(0,user,"Registry Success","success");
@@ -197,8 +199,8 @@ public class UserController {
         }
         try{
             //加密密码
-            //String password= SecureUtil.md5(user.getPassword());
-            //user.setPassword(password);
+            String code_password = SecureUtil.md5(user.getPassword());
+            user.setPassword(code_password);
             user.setRole("Staff");
             userMapper.addUser(user);
             return new JsonResult(0,user,"Registry Success","success");
