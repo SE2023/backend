@@ -86,7 +86,7 @@ public class UserController {
         try{
             //存储email, confirm code信息
             String confirmCode= RandomUtil.randomString(6);
-            Email existEmail=emailMapper.queryEmailByname(email);
+            Email existEmail=emailMapper.queryEmailByName(email);
             //检查是否需要更新验证码
             if (existEmail==null){
                 Email target=new Email(email,confirmCode);
@@ -155,7 +155,7 @@ public class UserController {
             //获取manager邮箱，设置为接受验证码的邮箱
             User manager=userMapper.queryUserByUsername("Manager1");
             String email=manager.getEmail();
-            Email existEmail=emailMapper.queryEmailByname(email);
+            Email existEmail=emailMapper.queryEmailByName(email);
             //检查是否需要更新验证码
             if(existEmail==null){
                 Email target=new Email(email,confirmCode);

@@ -4,11 +4,10 @@ import com.se2023.backend.entity.Email;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
 @Mapper
 public interface EmailMapper {
     @Select("select * from email_confirm where email = #{email}")
-    Email queryEmailByname(String email);
+    Email queryEmailByName(String email);
 
     @Select("select confirmCode from email_confirm where email = #{email}")
     String queryConfirmCodeByEmail(String email);
