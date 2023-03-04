@@ -23,5 +23,5 @@ public class Facility {
 
     String status;
 
-    Integer type;
+    String type;
 }

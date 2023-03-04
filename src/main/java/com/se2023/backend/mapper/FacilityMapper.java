@@ -1,5 +1,6 @@
 package com.se2023.backend.mapper;
 
+import com.se2023.backend.entity.Activity.Facility;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -7,14 +8,16 @@ import org.apache.ibatis.annotations.Select;
 public interface FacilityMapper {
 
     //添加设施
-    @Select("insert into facility (name, description, location, type, status) values (#{name}, #{description}, #{location}, #{type}, #{status})")
-    void addFacility();
+    @Select("insert into facility (name, sportsCentreId, capacity, status, type) values (#{name}, #{sportsCentreId}, #{capacity}, #{status}, #{type})")
+    void addFacility(Facility facility);
 
     //删除设施
     @Select("delete from facility where id = #{id}")
     void deleteFacility();
 
-    //修改设施
-    @Select("update facility set name = #{name}, description = #{description}, location = #{location}, type = #{type}, status = #{status} where id = #{id}")
-    void updateFacility();
+    @Select("select * from facility where id = #{id}")
+    Facility getFacilityById(Integer id);
+
+    @Select("select * from facility")
+    Facility[] getFacility();
 }
