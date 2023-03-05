@@ -32,6 +32,7 @@ public class OrderController {
 
     @PostMapping("/order")
     public JsonResult addOrder(@RequestBody Order order){
+        //新建一个订单，这里没有考虑人数上限的问题
         orderMapper.addOrder(order);
         return new JsonResult(200, null, "Add order", "success");
     }

@@ -30,6 +30,7 @@ public class ActivityController {
 
     @PostMapping("/activity/{timeUnityId}")
     public JsonResult addActivity(@PathVariable("timeUnityId") Integer timeUnityId, @RequestBody Activity activity){
+        //新建活动的时候，需要有一个时间单元的id，这个id是从前端传过来的
         activityMapper.addActivity(activity);
         Integer activityId = activityMapper.getActivityId(activity);
         activityMapper.addActivityTimeUnity(activityId, timeUnityId, activity.getUserAmount());
@@ -38,6 +39,7 @@ public class ActivityController {
 
     @GetMapping("/activity/{startTime}/{endTime}")
     public JsonResult getActivityByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime){
+        //根据时间段获取活动, 先根据时间段获取时间单元，再根据时间单元获取活动
         TimeUnity[] timeUnity = TimeUnityMapper.getTimeUnityByTime(startTime, endTime);
         Integer[] timeUnityId = new Integer[timeUnity.length];
         for (int i = 0; i < timeUnity.length; i++) {
