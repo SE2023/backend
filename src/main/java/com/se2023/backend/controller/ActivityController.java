@@ -1,22 +1,26 @@
 package com.se2023.backend.controller;
 
 import com.se2023.backend.entity.Activity.Activity;
+import com.se2023.backend.entity.Others.TimeUnity;
 import com.se2023.backend.mapper.ActivityMapper;
+import com.se2023.backend.mapper.TimeUnityMapper;
 import com.se2023.backend.utils.JsonResult;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ActivityController {
     private final ActivityMapper activityMapper;
+    private final TimeUnityMapper TimeUnityMapper;
 
     @Autowired
-    public ActivityController(ActivityMapper activityMapper) {
+    public ActivityController(ActivityMapper activityMapper, TimeUnityMapper TimeUnityMapper) {
         this.activityMapper = activityMapper;
+        this.TimeUnityMapper = TimeUnityMapper;
     }
 
     @GetMapping("/activity")
@@ -24,9 +28,29 @@ public class ActivityController {
         return new JsonResult(200, activityMapper.getActivity(), "Get activity", "success");
     }
 
-    @PostMapping("/activity")
-    public JsonResult addActivity(@RequestBody Activity activity){
+    @PostMapping("/activity/{timeUnityId}")
+    public JsonResult addActivity(@PathVariable("timeUnityId") Integer timeUnityId, @RequestBody Activity activity){
         activityMapper.addActivity(activity);
+        Integer activityId = activityMapper.getActivityId(activity);
+        activityMapper.addActivityTimeUnity(activityId, timeUnityId, activity.getUserAmount());
         return new JsonResult(200, null, "Add activity", "success");
+    }
+
+    @GetMapping("/activity/{startTime}/{endTime}")
+    public JsonResult getActivityByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime){
+        TimeUnity[] timeUnity = TimeUnityMapper.getTimeUnityByTime(startTime, endTime);
+        Integer[] timeUnityId = new Integer[timeUnity.length];
+        for (int i = 0; i < timeUnity.length; i++) {
+            timeUnityId[i] = timeUnity[i].getId();
+        }
+        List<Activity> activity_list = null;
+        for (int i = 0; i < timeUnityId.length; i++) {
+            Integer[] activity_id_list = activityMapper.getActivityByTimeUnity(timeUnityId[i]);
+            for (int j = 0; j < activity_id_list.length; j++) {
+                Activity activity = activityMapper.getActivityById(activity_id_list[j]);
+                activity_list.add(activity);
+            }
+        }
+        return new JsonResult(200, activity_list, "Get activity by time", "success");
     }
 }

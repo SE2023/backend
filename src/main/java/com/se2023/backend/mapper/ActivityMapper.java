@@ -17,13 +17,18 @@ public interface ActivityMapper {
     @Select("delete from activity where id = #{id}")
     void deleteActivity();
 
-    //修改活动
-    @Select("update activity set name = #{name}, description = #{description}, location = #{location}, time = #{time}, type = #{type}, status = #{status} where id = #{id}")
-    void updateActivity();
-
     @Select("select * from activity where id = #{id}")
     Activity getActivityById(Integer id);
 
     @Select("select * from activity")
     Activity[] getActivity();
+
+    @Select("select * from activity where facilityId = #{facilityId} and status = #{status} and userAmount = #{userAmount} and name = #{name}")
+    Integer getActivityId(Activity activity);
+
+    @Select("insert into activity_time (activityId, timeUnityId, peopleAmount) values (#{activityId}, #{timeUnityId}, #{peopleAmount})")
+    void addActivityTimeUnity(Integer activityId, Integer timeUnityId, Integer peopleAmount);
+
+    @Select("select * from activity_time where timeUnityId = #{timeUnityId}")
+    Integer[] getActivityByTimeUnity(Integer timeUnityId);
 }
