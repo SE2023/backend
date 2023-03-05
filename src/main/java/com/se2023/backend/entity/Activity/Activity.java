@@ -17,7 +17,7 @@ public class Activity {
 
     Integer facilityId;
 
-    Float price;
+    String price;
 
     String note;
 

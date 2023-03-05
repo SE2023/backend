@@ -2,20 +2,40 @@ package com.se2023.backend.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import com.se2023.backend.entity.Order.Order;
 
 @Mapper
 public interface OrderMapper {
+    @Select("select * from orders where id = #{id}")
+    Order getOrderById(Integer id);
 
-    //添加订单
-    @Select("insert into order (name, description, location, time, type, status) values (#{name}, #{description}, #{location}, #{time}, #{type}, #{status})")
-    void addOrder();
+    @Select("select * from orders")
+    Order[] getOrder();
 
-    //删除订单
-    @Select("delete from order where id = #{id}")
-    void deleteOrder();
+    @Select("select * from orders where userId = #{userId}")
+    Order[] getOrdersByUserId(Integer userId);
 
-    //修改订单
-    @Select("update order set name = #{name}, description = #{description}, location = #{location}, time = #{time}, type = #{type}, status = #{status} where id = #{id}")
-    void updateOrder();
+    @Select("select * from orders where activityId = #{activityId}")
+    Order[] getOrdersByActivityId(Integer activityId);
 
+    @Select("select * from orders where status = #{status}")
+    Order[] getOrdersByStatus(String status);
+
+    @Select("select * from orders where userId = #{userId} and status = #{status}")
+    Order[] getOrdersByUserIdAndStatus(Integer userId, String status);
+
+    @Select("select * from orders where activityId = #{activityId} and status = #{status}")
+    Order[] getOrdersByActivityIdAndStatus(Integer activityId, String status);
+
+    @Select("select * from orders where userId = #{userId} and activityId = #{activityId}")
+    Order[] getOrdersByUserIdAndActivityId(Integer userId, Integer activityId);
+
+    @Select("select * from orders where userId = #{userId} and activityId = #{activityId} and status = #{status}")
+    Order[] getOrdersByUserIdAndActivityIdAndStatus(Integer userId, Integer activityId, String status);
+
+    @Select("insert into orders (name, activityId, userId, status, note, payMoney) values (#{name}, #{activityId}, #{userId}, #{status}, #{note}, #{payMoney})")
+    void addOrder(Order order);
+
+    @Select("delete from orders where id = #{id}")
+    void deleteOrder(Integer id);
 }
