@@ -8,9 +8,12 @@ import com.se2023.backend.mapper.EmailMapper;
 import com.se2023.backend.mapper.UserMapper;
 import com.se2023.backend.utils.MailService;
 import com.se2023.backend.utils.JsonResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Api(value="User",tags = "用户管理")
 @RestController
 public class UserController {
     private final UserMapper userMapper;
@@ -25,7 +28,7 @@ public class UserController {
     }
 
 
-
+    @ApiOperation("Login")
     @GetMapping("/login")
     //加载login页面,并且自动加入一个staff账号和一个manager账号
     public JsonResult login(){
