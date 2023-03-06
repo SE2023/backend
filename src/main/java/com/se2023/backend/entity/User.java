@@ -1,5 +1,6 @@
 package com.se2023.backend.entity;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel("User")
 public class User {
     @TableId(type = IdType.AUTO)
     Integer id;
