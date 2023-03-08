@@ -10,6 +10,9 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+    @Select("select * from user where id = #{id}")
+    User queryUserById(Integer id);
+
     @Select("select * from user where email = #{email}")
     User queryUserByEmail(String email);
     @Select("select * from user where username = #{username}")

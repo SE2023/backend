@@ -2,6 +2,12 @@ package com.se2023.backend.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.se2023.backend.config.EncryptionWithKeyConfig;
 import com.se2023.backend.entity.Email;
 import com.se2023.backend.entity.User;
 import com.se2023.backend.mapper.EmailMapper;
@@ -13,12 +19,19 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 @Api(value="User",tags = "用户管理")
 @RestController
 public class UserController {
     private final UserMapper userMapper;
     private final EmailMapper emailMapper;
     private final MailService mailService;
+
+    private final int EXPIRE_DATE = 60 * 60 * 1000;
 
     @Autowired
     public UserController(UserMapper userMapper, EmailMapper emailMapper, MailService mailService) {
@@ -64,23 +77,41 @@ public class UserController {
         if (user==null){
             return new JsonResult(400,null,"Invalid username","failed");
         }
-        //检查密码是否正确
+        // 检查密码是否正确
         String code_password = SecureUtil.md5(userSubmit.getPassword());
         if(user.getPassword().equals(code_password)){
+            String token;
+            try {
+                // 过期时间
+                Date date = new Date(System.currentTimeMillis() + EXPIRE_DATE);
+                // algorithm
+                Algorithm algorithm = Algorithm.HMAC256(EncryptionWithKeyConfig.KEY);
+                Map<String, Object> header = new HashMap<>();
+                header.put("alg", "HS256");
+                header.put("typ", "JWT");
+                token = JWT.create()
+                        .withHeader(header)
+                        .withClaim("username", user.getUsername())
+                        .withClaim("role", user.getRole())
+                        .withExpiresAt(date)
+                        .sign(algorithm);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new JsonResult(400,null,"Token error","failed");
+            }
+            Map<String, String> map = new HashMap<>();
+            map.put("token", token);
             if(user.getRole().equals("Consumer")){
-                return new JsonResult(500,user.getUsername(),"Consumer login","success");
+                return new JsonResult(0,map,"Consumer login","success");
             }else if(user.getRole().equals("Staff")){
-                return new JsonResult(500,user.getUsername(),"Staff login","success");
+                return new JsonResult(0,map,"Staff login","success");
             }else{
-                return new JsonResult(500,user.getUsername(),"Manager login","success");
+                return new JsonResult(0,map,"Manager login","success");
             }
         }else{
             return new JsonResult(400,null,"Invalid password","failed");
         }
     }
-
-
-
 
 
     //对用户输入的邮箱发送验证码，并存储邮箱、验证码到email_confirm表中
@@ -101,7 +132,7 @@ public class UserController {
             String subject="Sports center registry confirm code ~";
             String text="This is your registry confirm code: "+confirmCode+". Please keep it to yourself ~";
             mailService.sendEmail(email,subject,text);
-            return new JsonResult(400,email,"send email success","success");
+            return new JsonResult(0,email,"send email success","success");
         }catch(Exception e){
             System.out.println(e);
             return new JsonResult(500,null,"Something wrong","failed");
@@ -147,9 +178,6 @@ public class UserController {
         }
     }
 
-
-
-
     @PostMapping("/Staff_email")
     public JsonResult staff_email(){
         try{
@@ -170,7 +198,7 @@ public class UserController {
             String subject="Sports center registry confirm code ~";
             String text="This is your registry confirm code: "+confirmCode+". Please keep it to yourself ~";
             mailService.sendEmail(email,subject,text);
-            return new JsonResult(400,confirmCode,"send email success","success");
+            return new JsonResult(0,confirmCode,"send email success","success");
         }catch(Exception e){
             System.out.println(e);
             return new JsonResult(500,null,"Something wrong","failed");
@@ -206,6 +234,8 @@ public class UserController {
             user.setPassword(code_password);
             user.setRole("Staff");
             userMapper.addUser(user);
+            // 清空验证码
+            emailMapper.updateConfirm(null,email);
             return new JsonResult(0,user,"Registry Success","success");
         }catch(Exception e){
             System.out.println(e);
@@ -214,9 +244,46 @@ public class UserController {
     }
 
 
-    @GetMapping("/user")
+    @GetMapping("/users")
     public JsonResult queryUser() {
         return new JsonResult(0, userMapper.queryAllUser(), "查询成功", "success");
     }
 
+    @GetMapping(value="/user")
+    public JsonResult getUserInfo(@RequestHeader("Authorization") String token) {
+        Algorithm algorithm = Algorithm.HMAC256(EncryptionWithKeyConfig.KEY);
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT jwt = verifier.verify(token);
+        String username = jwt.getClaim("username").asString();
+        User user = userMapper.queryUserByUsername(username);
+        if (user == null) {
+            return new JsonResult(400, null, "The user does not exists.", "failed");
+        }
+        JSONObject res = new JSONObject();
+        res.put("id", user.getId());
+        res.put("username", user.getUsername());
+        res.put("email", user.getEmail());
+        JSONObject role = new JSONObject();
+        role.put("roleName", user.getRole());
+        role.put("value", user.getRole());
+        ArrayList<JSONObject> roles = new ArrayList<>();
+        roles.add(role);
+        res.put("roles",roles);
+        if (user.getRole().equals("Manager")) {
+            res.put("homePath", "/facilities/overview");
+        } else if (user.getRole().equals("Staff")) {
+            res.put("homePath", "/facilities/overview");
+        } else {
+            return new JsonResult(400, null, "You have no permission to access.", "failed");
+        }
+        return new JsonResult(0, res, "Successfully achieved the user's info.", "success");
+    }
+
+    @GetMapping(value="/user/logout")
+    public JsonResult logout(@RequestHeader("Authorization") String token) {
+        if(token != null){
+            return new JsonResult(0, null, "Logout successfully.", "success");
+        }
+        return new JsonResult(400, null, "Logout failed", "failed");
+    }
 }
