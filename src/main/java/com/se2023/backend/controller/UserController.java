@@ -44,8 +44,8 @@ public class UserController {
     @ApiOperation("Login")
     @GetMapping("/login")
     //加载login页面,并且自动加入一个staff账号和一个manager账号
-    public JsonResult login(){
-        if(userMapper.queryUserByUsername("Manager1")==null){
+    public JsonResult login() {
+        if (userMapper.queryUserByUsername("Manager1") == null) {
             User manager = new User();
             manager.setUsername("Manager1");
             manager.setEmail("350012471@qq.com");//所有staff注册通过此邮箱验证
@@ -53,33 +53,33 @@ public class UserController {
             manager.setRole("Manager");
             userMapper.addUser(manager);
         }
-        if(userMapper.queryUserByUsername("Staff1")==null){
+        if (userMapper.queryUserByUsername("Staff1") == null) {
             User staff = new User();
             staff.setUsername("Staff1");
             staff.setPassword("123456");
             staff.setRole("Staff");
             userMapper.addUser(staff);
         }
-        return new JsonResult(500,"Login in page","Login in page","success");
+        return new JsonResult(500, "Login in page", "Login in page", "success");
     }
 
 
     @PostMapping("/login")
     //login页面提交后检验是否登陆成功
-    public JsonResult Login(@RequestBody User userSubmit){
+    public JsonResult Login(@RequestBody User userSubmit) {
         //确认username和password均输入
-        if(userSubmit.getPassword()==null||userSubmit.getUsername()==null){
-            return new JsonResult(400,null,"Username or password missing","failed");
+        if (userSubmit.getPassword() == null || userSubmit.getUsername() == null) {
+            return new JsonResult(400, null, "Username or password missing", "failed");
         }
         //查询username是否存在
         String username_submit = userSubmit.getUsername();
-        User user=userMapper.queryUserByUsername(username_submit);
-        if (user==null){
-            return new JsonResult(400,null,"Invalid username","failed");
+        User user = userMapper.queryUserByUsername(username_submit);
+        if (user == null) {
+            return new JsonResult(400, null, "Invalid username", "failed");
         }
         // 检查密码是否正确
         String code_password = SecureUtil.md5(userSubmit.getPassword());
-        if(user.getPassword().equals(code_password)){
+        if (user.getPassword().equals(code_password)) {
             String token;
             try {
                 // 过期时间
@@ -97,58 +97,59 @@ public class UserController {
                         .sign(algorithm);
             } catch (Exception e) {
                 e.printStackTrace();
-                return new JsonResult(400,null,"Token error","failed");
+                return new JsonResult(400, null, "Token error", "failed");
             }
             Map<String, String> map = new HashMap<>();
             map.put("token", token);
-            if(user.getRole().equals("Consumer")){
-                return new JsonResult(0,map,"Consumer login","success");
-            }else if(user.getRole().equals("Staff")){
-                return new JsonResult(0,map,"Staff login","success");
-            }else{
-                return new JsonResult(0,map,"Manager login","success");
+            if (user.getRole().equals("Consumer")) {
+                return new JsonResult(0, map, "Consumer login", "success");
+            } else if (user.getRole().equals("Staff")) {
+                return new JsonResult(0, map, "Staff login", "success");
+            } else {
+                return new JsonResult(0, map, "Manager login", "success");
             }
-        }else{
-            return new JsonResult(400,null,"Invalid password","failed");
+        } else {
+            return new JsonResult(400, null, "Invalid password", "failed");
         }
     }
 
 
     //对用户输入的邮箱发送验证码，并存储邮箱、验证码到email_confirm表中
     @PostMapping("/Consumer/{email}")
-    public JsonResult consumer_email(@PathVariable("email") String email){
-        try{
+    public JsonResult consumer_email(@PathVariable("email") String email) {
+        try {
             //存储email, confirm code信息
-            String confirmCode= RandomUtil.randomString(6);
-            Email existEmail=emailMapper.queryEmailByName(email);
+            String confirmCode = RandomUtil.randomString(6);
+            Email existEmail = emailMapper.queryEmailByName(email);
             //检查是否需要更新验证码
-            if (existEmail==null){
-                Email target=new Email(email,confirmCode);
+            if (existEmail == null) {
+                Email target = new Email(email, confirmCode);
                 emailMapper.addConfirm(target);
-            }else{
-                emailMapper.updateConfirm(confirmCode,email);
+            } else {
+                emailMapper.updateConfirm(confirmCode, email);
             }
             //发送邮件
-            String subject="Sports center registry confirm code ~";
-            String text="This is your registry confirm code: "+confirmCode+". Please keep it to yourself ~";
-            mailService.sendEmail(email,subject,text);
-            return new JsonResult(0,email,"send email success","success");
-        }catch(Exception e){
+            String subject = "Sports center registry confirm code ~";
+            String text = "This is your registry confirm code: " + confirmCode + ". Please keep it to yourself ~";
+            mailService.sendEmail(email, subject, text);
+            return new JsonResult(0, email, "send email success", "success");
+        } catch (Exception e) {
             System.out.println(e);
-            return new JsonResult(500,null,"Something wrong","failed");
+            return new JsonResult(500, null, "Something wrong", "failed");
         }
     }
+
     //register页面提交后检验是否注册成功
     @PostMapping("/Consumer")
-    public JsonResult c_register(@RequestBody User user){
+    public JsonResult c_register(@RequestBody User user) {
         //确保所有信息输入完整
-        if(user.getUsername()==null||user.getPassword()==null||user.getEmail()==null||user.getConfirmCode()==null){
-            return new JsonResult(500,null,"Something missing!","failed");
+        if (user.getUsername() == null || user.getPassword() == null || user.getEmail() == null || user.getConfirmCode() == null) {
+            return new JsonResult(500, null, "Something missing!", "failed");
         }
         //控制username不能重复
-        String username_submit=user.getUsername();
-        if(userMapper.queryUserByUsername(username_submit)!=null){
-            return new JsonResult(500,null,"This username is already used.","failed");
+        String username_submit = user.getUsername();
+        if (userMapper.queryUserByUsername(username_submit) != null) {
+            return new JsonResult(500, null, "This username is already used.", "failed");
         }
 //        //检查重复的密码是否一致
 //        if(!user.getPassword().equals()){
@@ -156,65 +157,65 @@ public class UserController {
 //        }
         //检查验证码是否一致
         //获取输入的email的正确验证码
-        String email=user.getEmail();
-        if(emailMapper.queryConfirmCodeByEmail(email)==null){
-            return new JsonResult(500,null,"Invalid email","failed");
-        }else{
-            String right_confirm=emailMapper.queryConfirmCodeByEmail(email);
-            if(!user.getConfirmCode().equals(right_confirm)){
-                return new JsonResult(500,null,"Invalid confirm code","failed");
+        String email = user.getEmail();
+        if (emailMapper.queryConfirmCodeByEmail(email) == null) {
+            return new JsonResult(500, null, "Invalid email", "failed");
+        } else {
+            String right_confirm = emailMapper.queryConfirmCodeByEmail(email);
+            if (!user.getConfirmCode().equals(right_confirm)) {
+                return new JsonResult(500, null, "Invalid confirm code", "failed");
             }
         }
-        try{
+        try {
             //加密密码
             String code_password = SecureUtil.md5(user.getPassword());
             user.setPassword(code_password);
             user.setRole("Consumer");
             userMapper.addUser(user);
-            return new JsonResult(0,user,"Registry Success","success");
-        }catch(Exception e){
+            return new JsonResult(0, user, "Registry Success", "success");
+        } catch (Exception e) {
             System.out.println(e);
-            return new JsonResult(500,null,"Registry Failed!","failed");
+            return new JsonResult(500, null, "Registry Failed!", "failed");
         }
     }
 
     @PostMapping("/Staff_email")
-    public JsonResult staff_email(){
-        try{
+    public JsonResult staff_email() {
+        try {
             //存储email, 更新/添加confirm code信息
-            String confirmCode= RandomUtil.randomString(6);//生成随机验证码
+            String confirmCode = RandomUtil.randomString(6);//生成随机验证码
             //获取manager邮箱，设置为接受验证码的邮箱
-            User manager=userMapper.queryUserByUsername("Manager1");
-            String email=manager.getEmail();
-            Email existEmail=emailMapper.queryEmailByName(email);
+            User manager = userMapper.queryUserByUsername("Manager1");
+            String email = manager.getEmail();
+            Email existEmail = emailMapper.queryEmailByName(email);
             //检查是否需要更新验证码
-            if(existEmail==null){
-                Email target=new Email(email,confirmCode);
+            if (existEmail == null) {
+                Email target = new Email(email, confirmCode);
                 emailMapper.addConfirm(target);//不需要更新，直接添加
-            }else{
-                emailMapper.updateConfirm(confirmCode,email);
+            } else {
+                emailMapper.updateConfirm(confirmCode, email);
             }
             //发送邮件
-            String subject="Sports center registry confirm code ~";
-            String text="This is your registry confirm code: "+confirmCode+". Please keep it to yourself ~";
-            mailService.sendEmail(email,subject,text);
-            return new JsonResult(0,confirmCode,"send email success","success");
-        }catch(Exception e){
+            String subject = "Sports center registry confirm code ~";
+            String text = "This is your registry confirm code: " + confirmCode + ". Please keep it to yourself ~";
+            mailService.sendEmail(email, subject, text);
+            return new JsonResult(0, confirmCode, "send email success", "success");
+        } catch (Exception e) {
             System.out.println(e);
-            return new JsonResult(500,null,"Something wrong","failed");
+            return new JsonResult(500, null, "Something wrong", "failed");
         }
     }
 
     @PostMapping("/Staff")
-    public JsonResult s_register(@RequestBody User user){
+    public JsonResult s_register(@RequestBody User user) {
         //确保所有信息输入完整
-        if(user.getUsername()==null||user.getPassword()==null||user.getConfirmCode()==null){
-            return new JsonResult(500,null,"Something missing!","failed");
+        if (user.getUsername() == null || user.getPassword() == null || user.getConfirmCode() == null) {
+            return new JsonResult(500, null, "Something missing!", "failed");
         }
         //控制username不能重复
-        String username_submit=user.getUsername();
-        if(userMapper.queryUserByUsername(username_submit)!=null){
-            return new JsonResult(500,null,"This username is already used.","failed");
+        String username_submit = user.getUsername();
+        if (userMapper.queryUserByUsername(username_submit) != null) {
+            return new JsonResult(500, null, "This username is already used.", "failed");
         }
 //        //检查重复的密码是否一致
 //        if(!user.getPassword().equals()){
@@ -222,24 +223,24 @@ public class UserController {
 //        }
         //检查验证码是否一致
         //获取输入的email的正确验证码
-        User manager=userMapper.queryUserByUsername("Manager1");
-        String email=manager.getEmail();
-        String right_confirm=emailMapper.queryConfirmCodeByEmail(email);
-        if(!user.getConfirmCode().equals(right_confirm)){
-            return new JsonResult(500,null,"Invalid confirm code","failed");
+        User manager = userMapper.queryUserByUsername("Manager1");
+        String email = manager.getEmail();
+        String right_confirm = emailMapper.queryConfirmCodeByEmail(email);
+        if (!user.getConfirmCode().equals(right_confirm)) {
+            return new JsonResult(500, null, "Invalid confirm code", "failed");
         }
-        try{
+        try {
             //加密密码
             String code_password = SecureUtil.md5(user.getPassword());
             user.setPassword(code_password);
             user.setRole("Staff");
             userMapper.addUser(user);
             // 清空验证码
-            emailMapper.updateConfirm(null,email);
-            return new JsonResult(0,user,"Registry Success","success");
-        }catch(Exception e){
+            emailMapper.updateConfirm(null, email);
+            return new JsonResult(0, user, "Registry Success", "success");
+        } catch (Exception e) {
             System.out.println(e);
-            return new JsonResult(500,null,"Registry Failed!","failed");
+            return new JsonResult(500, null, "Registry Failed!", "failed");
         }
     }
 
@@ -249,7 +250,7 @@ public class UserController {
         return new JsonResult(0, userMapper.queryAllUser(), "查询成功", "success");
     }
 
-    @GetMapping(value="/user")
+    @GetMapping(value = "/user")
     public JsonResult getUserInfo(@RequestHeader("Authorization") String token) {
         Algorithm algorithm = Algorithm.HMAC256(EncryptionWithKeyConfig.KEY);
         JWTVerifier verifier = JWT.require(algorithm).build();
@@ -268,7 +269,7 @@ public class UserController {
         role.put("value", user.getRole());
         ArrayList<JSONObject> roles = new ArrayList<>();
         roles.add(role);
-        res.put("roles",roles);
+        res.put("roles", roles);
         if (user.getRole().equals("Manager")) {
             res.put("homePath", "/facilities/overview");
         } else if (user.getRole().equals("Staff")) {
@@ -279,11 +280,26 @@ public class UserController {
         return new JsonResult(0, res, "Successfully achieved the user's info.", "success");
     }
 
-    @GetMapping(value="/user/logout")
+    @GetMapping(value = "/user/logout")
     public JsonResult logout(@RequestHeader("Authorization") String token) {
-        if(token != null){
+        if (token != null) {
             return new JsonResult(0, null, "Logout successfully.", "success");
         }
         return new JsonResult(400, null, "Logout failed", "failed");
+    }
+
+    @GetMapping(value = "/user/nonmembers")
+    public JsonResult queryAllNonmembers() {
+        return new JsonResult(0, userMapper.queryUserByRole("Nonmember"), "Successfully achieved the nonmembers' info.", "success");
+    }
+
+    @GetMapping(value = "/user/staffs")
+    public JsonResult queryAllStaffs() {
+        return new JsonResult(0, userMapper.queryUserByRole("Staff"), "Successfully achieved the staffs' info.", "success");
+    }
+
+    @GetMapping(value = "/user/members")
+    public JsonResult queryAllMembers() {
+        return new JsonResult(0, userMapper.queryUserByRole("Member"), "Successfully achieved the members' info.", "success");
     }
 }
