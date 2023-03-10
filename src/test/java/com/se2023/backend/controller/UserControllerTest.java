@@ -7,13 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    private final String urlPrefix = "http://localhost:8880";
 
     @BeforeEach
     void setUp() {
@@ -27,7 +27,7 @@ class UserControllerTest {
 
     @Test
     void Login() {
-        String url = "http://localhost:8880/login";
+        String url = urlPrefix + "/login";
 
         // invalid username
         User user = new User();
