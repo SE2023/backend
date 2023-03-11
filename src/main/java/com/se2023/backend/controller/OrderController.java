@@ -22,18 +22,18 @@ public class OrderController {
 
     @GetMapping("/order")
     public JsonResult getOrder(){
-        return new JsonResult(200, orderMapper.getOrder(), "Get order", "success");
+        return new JsonResult(0, orderMapper.getOrder(), "Get order", "success");
     }
 
     @GetMapping("/order/{id}")
     public JsonResult getOrderById(@PathVariable("id") Integer id){
-        return new JsonResult(200, orderMapper.getOrderById(id), "Get order by id", "success");
+        return new JsonResult(0, orderMapper.getOrderById(id), "Get order by id", "success");
     }
 
     @PostMapping("/order")
     public JsonResult addOrder(@RequestBody Order order) {
         //新建一个订单，这里没有考虑人数上限的问题
         orderMapper.addOrder(order);
-        return new JsonResult(200, null, "Add order", "success");
+        return new JsonResult(0, null, "Add order", "success");
     }
 }

@@ -25,7 +25,7 @@ public class ActivityController {
 
     @GetMapping("/activity")
     public JsonResult getActivity(){
-        return new JsonResult(200, activityMapper.getActivity(), "Get activity", "success");
+        return new JsonResult(0, activityMapper.getActivity(), "Get activity", "success");
     }
 
     @PostMapping("/activity/{timeUnityId}")
@@ -34,7 +34,7 @@ public class ActivityController {
         activityMapper.addActivity(activity);
         Integer activityId = activityMapper.getActivityId(activity);
         activityMapper.addActivityTimeUnity(activityId, timeUnityId, activity.getUserAmount());
-        return new JsonResult(200, null, "Add activity", "success");
+        return new JsonResult(0, null, "Add activity", "success");
     }
 
     @GetMapping("/activity/{startTime}/{endTime}")
@@ -53,6 +53,6 @@ public class ActivityController {
                 activity_list.add(activity);
             }
         }
-        return new JsonResult(200, activity_list, "Get activity by time", "success");
+        return new JsonResult(0, activity_list, "Get activity by time", "success");
     }
 }
