@@ -18,17 +18,17 @@ public class FacilityController{
     @PostMapping("/facility")
     public JsonResult addFacility(@RequestBody Facility facility){
         facilityMapper.addFacility(facility);
-        return new JsonResult(200, null, "Add facility", "success");
+        return new JsonResult(0, null, "Add facility", "success");
     }
 
     @GetMapping("/facility")
     public JsonResult getFacility(){
-        return new JsonResult(200, facilityMapper.getFacility(), "Get facility", "success");
+        return new JsonResult(0, facilityMapper.getFacility(), "Get facility", "success");
     }
 
     @GetMapping("/facility/{id}")
     public JsonResult getFacilityById(@PathVariable("id") Integer id){
-        return new JsonResult(200, facilityMapper.getFacilityById(id), "Get facility by id", "success");
+        return new JsonResult(0, facilityMapper.getFacilityById(id), "Get facility by id", "success");
     }
 
 }

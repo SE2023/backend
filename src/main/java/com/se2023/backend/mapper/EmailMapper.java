@@ -6,15 +6,15 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface EmailMapper {
-    @Select("select * from email_confirm where email = #{email}")
+    @Select("select * from email where email = #{email}")
     Email queryEmailByName(String email);
 
-    @Select("select confirmCode from email_confirm where email = #{email}")
+    @Select("select confirmCode from email where email = #{email}")
     String queryConfirmCodeByEmail(String email);
 
-    @Select("insert into email_confirm (email,confirmCode) values (#{email}, #{confirmCode})")
+    @Select("insert into email (email,confirmCode) values (#{email}, #{confirmCode})")
     void addConfirm(Email email);
 
-    @Select("update email_confirm set confirmCode = #{confirmCode} where email = #{email}")
+    @Select("update email set confirmCode = #{confirmCode} where email = #{email}")
     void updateConfirm(String confirmCode, String email);
 }

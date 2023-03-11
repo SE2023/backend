@@ -21,6 +21,6 @@ public class TimeUnityController {
         //新建时间单元，这应该在创建活动之前完成，前端因此要发两次请求
         timeUnityMapper.addTimeUnity(timeUnity);
         Integer id = timeUnityMapper.getTimeUnityId(timeUnity);
-        return new JsonResult(200, id, "Add time unity", "success");
+        return new JsonResult(0, id, "Add time unity", "success");
     }
 }
