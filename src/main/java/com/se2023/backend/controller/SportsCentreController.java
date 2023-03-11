@@ -22,6 +22,6 @@ public class SportsCentreController {
     @GetMapping("/sports_centre/{id}")
     public JsonResult getSportsCentreById(@PathVariable("id") Integer id){
         SportsCentre sportsCentre = sportsCentreMapper.getSportsCentreById(id);
-        return new JsonResult(200, sportsCentre, "Get sports centre by id", "success");
+        return new JsonResult(0, sportsCentre, "Get sports centre by id", "success");
     }
 }

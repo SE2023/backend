@@ -247,7 +247,7 @@ public class UserController {
 
     @GetMapping("/users")
     public JsonResult queryUser() {
-        return new JsonResult(0, userMapper.queryAllUser(), "查询成功", "success");
+        return new JsonResult(0, userMapper.queryAllUser(), "Query all users successfully.", "success");
     }
 
     @GetMapping(value = "/user")
