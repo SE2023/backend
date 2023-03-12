@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:src/main/datasource/SQLite
+    username:
+    password:
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+
+  mail:
+    protocol: smtp #mail protocol
+    host: SMTP.126.com
+    username: jiayixxx@126.com #sending from
+    password: TWTNJLSBHTXLAABR
+    default-encoding: utf-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          port: 465
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+        debug: true #turn on debug
+      smtp:
+        ssl.enable: true
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+server:
+  port: 8880
+
