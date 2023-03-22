@@ -1,5 +1,6 @@
 package com.se2023.backend.controller;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -16,9 +17,14 @@ import com.se2023.backend.utils.MailService;
 import com.se2023.backend.utils.JsonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+import org.apache.coyote.http11.filters.IdentityOutputFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -301,5 +307,42 @@ public class UserController {
     @GetMapping(value = "/user/members")
     public JsonResult queryAllMembers() {
         return new JsonResult(0, userMapper.queryUserByRole("Member"), "Successfully achieved the members' info.", "success");
+    }
+
+
+    @PostMapping(value="/user/setMembership")
+    public JsonResult setMembership(@RequestBody User user){
+        if (user.getMembership()==null){
+            user.setMembership(1);
+            Integer user_id=user.getId();
+            userMapper.setMembership(user.getId());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            String create_time = sdf.format(new Date());
+            Date ex=new Date();
+            ex.setTime(ex.getTime()+365*24*60*60*1000L );//会员保质期一年
+            String expire_time=sdf.format(ex);
+            userMapper.addMemebrship(user_id,create_time,expire_time);
+            return new JsonResult(0, null,"Successfully achieved the members' info.", "success");
+        }
+        else{
+            return new JsonResult(400, null,"You have already a membership", "fail");
+        }
+    }
+
+    @PostMapping(value="/user/removeMembership")
+    public JsonResult removeMembership(@RequestBody User user){
+        if(user.getMembership()!=null && user.getId()!=null){
+            userMapper.removeMembership(user.getId());
+            userMapper.deleteMembership(user.getId());
+            return new JsonResult(0,null,"Successfully remove this membership","success");
+        }
+        else{
+            return new JsonResult(400,null,"Not the membership!","fail");
+        }
+    }
+
+    @GetMapping(value="/user/membership")
+    public JsonResult queryAllMembership(){
+        return new JsonResult(0, userMapper.queryMembership(),"Successfully query all membership", "success");
     }
 }

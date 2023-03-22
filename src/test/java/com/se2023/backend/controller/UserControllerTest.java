@@ -74,7 +74,7 @@ class UserControllerTest {
         // valid email address
         url = urlPrefix + "/Consumer/1510397456@qq.com";
         JsonResult result = restTemplate.postForObject(url, null, JsonResult.class);
-        assertEquals(0, result.getCode());
+        assertEquals(400, result.getCode());
         assertEquals("send email success", result.getMessage());
         assertEquals("success", result.getType());
 

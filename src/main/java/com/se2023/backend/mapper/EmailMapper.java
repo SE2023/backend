@@ -17,4 +17,5 @@ public interface EmailMapper {
 
     @Select("update email set confirmCode = #{confirmCode} where email = #{email}")
     void updateConfirm(String confirmCode, String email);
+
 }

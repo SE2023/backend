@@ -21,6 +21,7 @@ public class User {
     String email;
     String confirmCode;
     String role;
+    Integer membership;
 
     public String getUsername() {
         return username;
@@ -61,6 +62,12 @@ public class User {
     public void setConfirmCode(String confirmCode) {
         this.confirmCode = confirmCode;
     }
+
+    public Integer getMembership(){
+        return membership;
+    }
+
+    public void setMembership(Integer membership){ this.membership = membership;}
 
 
     @Override
