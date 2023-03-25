@@ -38,4 +38,10 @@ public interface OrderMapper {
 
     @Select("delete from orders where id = #{id}")
     void deleteOrder(Integer id);
+
+    @Select("select capacity from facility where id = #{id}")
+    Integer getCapacity(Integer id);
+
+    @Select("select facilityId from activity where id = #{id}")
+    Integer getFacilityId(Integer id);
 }
