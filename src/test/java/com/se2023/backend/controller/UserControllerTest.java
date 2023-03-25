@@ -239,4 +239,60 @@ class UserControllerTest {
         assertEquals("Successfully achieved the members' info.", result.getMessage());
         assertEquals("success", result.getType());
     }
+
+    @Test
+    void setMembership(){
+        String url = urlPrefix + "/user/setMembership";
+
+        User user = new User();
+
+        JsonResult result;
+
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("Something missing!", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        user.setId(1);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("You are already a membership", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        //每次实验前需要先清空此调数据库信息
+        user.setId(2);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(0, result.getCode());
+        assertEquals("Successfully join in the membership!", result.getMessage());
+        assertEquals("success", result.getType());
+    }
+
+    @Test
+    void removeMembership(){
+        String url = urlPrefix + "/user/removeMembership";
+
+        User user = new User();
+
+        JsonResult result;
+
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("Missing user id!", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        user.setId(0);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("Invalid membership!", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        user.setId(2);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(0, result.getCode());
+        assertEquals("Successfully remove this membership!", result.getMessage());
+        assertEquals("success", result.getType());
+
+
+    }
+
 }

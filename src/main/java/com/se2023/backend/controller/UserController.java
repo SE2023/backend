@@ -310,39 +310,55 @@ public class UserController {
     }
 
 
+
+
+
+    //优化：只传id，通过id获取用户信息，在进行操作
     @PostMapping(value="/user/setMembership")
     public JsonResult setMembership(@RequestBody User user){
-        if (user.getMembership()==null){
-            user.setMembership(1);
+        if(user.getId()!=null){
+            //check 是否已经是membership
             Integer user_id=user.getId();
-            userMapper.setMembership(user.getId());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-            String create_time = sdf.format(new Date());
-            Date ex=new Date();
-            ex.setTime(ex.getTime()+365*24*60*60*1000L );//会员保质期一年
-            String expire_time=sdf.format(ex);
-            userMapper.addMemebrship(user_id,create_time,expire_time);
-            return new JsonResult(0, null,"Successfully achieved the members' info.", "success");
+            if (userMapper.queryMembership(user_id)==null){
+                //user表里set membership为1
+                userMapper.setMembership(user.getId());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                String create_time = sdf.format(new Date());
+                Date ex=new Date();
+                ex.setTime(ex.getTime()+365*24*60*60*1000L );//会员保质期一年
+                String expire_time=sdf.format(ex);
+                //membership表里add对象
+                userMapper.addMemebrship(user_id,create_time,expire_time);
+                return new JsonResult(0, null,"Successfully join in the membership!", "success");
+            }
+            else{
+                System.out.println(userMapper.queryMembership(user_id));
+                return new JsonResult(500, null,"You are already a membership", "fail");
+            }
         }
         else{
-            return new JsonResult(400, null,"You have already a membership", "fail");
+            return  new JsonResult(500,null,"Something missing!","fail");
         }
     }
 
     @PostMapping(value="/user/removeMembership")
     public JsonResult removeMembership(@RequestBody User user){
-        if(user.getMembership()!=null && user.getId()!=null){
-            userMapper.removeMembership(user.getId());
-            userMapper.deleteMembership(user.getId());
-            return new JsonResult(0,null,"Successfully remove this membership","success");
-        }
-        else{
-            return new JsonResult(400,null,"Not the membership!","fail");
+        if(user.getId()!=null){
+            Integer user_id=user.getId();
+            if(userMapper.queryMembership(user_id)!=null){
+                userMapper.removeMembership(user.getId());
+                userMapper.deleteMembership(user.getId());
+                return new JsonResult(0,null,"Successfully remove this membership!","success");
+            }else{
+                return new JsonResult(500,null,"Invalid membership!","fail");
+            }
+        }else{
+            return new JsonResult(500,null,"Missing user id!","fail");
         }
     }
 
     @GetMapping(value="/user/membership")
     public JsonResult queryAllMembership(){
-        return new JsonResult(0, userMapper.queryMembership(),"Successfully query all membership", "success");
+        return new JsonResult(0, userMapper.queryAllMembership(),"Successfully query all membership", "success");
     }
 }
