@@ -280,8 +280,6 @@ public class UserController {
             res.put("homePath", "/facilities/overview");
         } else if (user.getRole().equals("Staff")) {
             res.put("homePath", "/facilities/overview");
-        } else {
-            return new JsonResult(400, null, "You have no permission to access.", "failed");
         }
         return new JsonResult(0, res, "Successfully achieved the user's info.", "success");
     }
