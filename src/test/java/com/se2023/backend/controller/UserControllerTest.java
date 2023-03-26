@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.se2023.backend.config.EncryptionWithKeyConfig;
 import com.se2023.backend.entity.User;
 import com.se2023.backend.utils.JsonResult;
+import io.swagger.models.auth.In;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -267,6 +268,7 @@ class UserControllerTest {
         assertEquals("success", result.getType());
     }
 
+
     @Test
     void removeMembership(){
         String url = urlPrefix + "/user/removeMembership";
@@ -291,8 +293,15 @@ class UserControllerTest {
         assertEquals(0, result.getCode());
         assertEquals("Successfully remove this membership!", result.getMessage());
         assertEquals("success", result.getType());
-
-
     }
 
+    @Test
+    void queryAllMembership(){
+        String url = urlPrefix + "/user/membership";
+
+        JsonResult result = restTemplate.getForObject(url, JsonResult.class);
+        assertEquals(0, result.getCode());
+        assertEquals("Successfully query all membership", result.getMessage());
+        assertEquals("success", result.getType());
+    }
 }
