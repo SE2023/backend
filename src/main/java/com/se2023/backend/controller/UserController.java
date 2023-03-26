@@ -312,8 +312,6 @@ public class UserController {
 
 
 
-
-    //优化：只传id，通过id获取用户信息，在进行操作
     @PostMapping(value="/user/setMembership")
     public JsonResult setMembership(@RequestBody User user){
         if(user.getId()!=null){
@@ -325,7 +323,7 @@ public class UserController {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
                 String create_time = sdf.format(new Date());
                 Date ex=new Date();
-                ex.setTime(ex.getTime()+365*24*60*60*1000L );//会员保质期一年
+                ex.setTime(ex.getTime()+365*24*60*60*1000L );//会员默认保质期一年
                 String expire_time=sdf.format(ex);
                 //membership表里add对象
                 userMapper.addMemebrship(user_id,create_time,expire_time);
