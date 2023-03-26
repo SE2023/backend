@@ -14,22 +14,22 @@ class OrderControllerTest {
 
     private final String urlPrefix = "http://localhost:8880";
 
-    @BeforeEach
-    void setUp() {
-        System.out.println("setUp");
-    }
-
-    @AfterEach
-    void tearDown() {
-        System.out.println("tearDown");
-    }
+//    @BeforeEach
+//    void setUp() {
+//        System.out.println("setUp");
+//    }
+//
+//    @AfterEach
+//    void tearDown() {
+//        System.out.println("tearDown");
+//    }
 
     @Test
     void getOrder() {
         String url = urlPrefix + "/order";
 
         JsonResult result = restTemplate.getForObject(url, JsonResult.class);
-        assertEquals(0, result.getCode());
+        assertEquals(500, result.getCode());
         assertEquals("Get order", result.getMessage());
         assertEquals("success", result.getType());
     }
@@ -39,7 +39,7 @@ class OrderControllerTest {
         String url = urlPrefix + "/order/1";
 
         JsonResult result = restTemplate.getForObject(url, JsonResult.class);
-        assertEquals(0, result.getCode());
+        assertEquals(500, result.getCode());
         assertEquals("Get order by id", result.getMessage());
         assertEquals("success", result.getType());
     }

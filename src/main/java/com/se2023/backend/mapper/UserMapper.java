@@ -1,11 +1,10 @@
 package com.se2023.backend.mapper;
 
 import com.se2023.backend.entity.User;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -29,4 +28,24 @@ public interface UserMapper {
 
     @Select("insert into user (username, password, email, role) values (#{username}, #{password}, #{email}, #{role})")
     void addUser(User user);
+
+
+    @Update("update user set membership=1 where id = #{id}")
+    void setMembership(Integer id);
+
+    @Update("update user set membership=null where id = #{id}")
+    void removeMembership(Integer id);
+
+    @Select("select * from membership")
+    List<User> queryAllMembership();
+
+    @Select("select user_id from membership where user_id = #{user_id}")
+    Integer queryMembership(Integer user_id);
+
+    @Select("insert into membership(user_id,create_time,expire_time) values(#{user_id}, #{create_time}, #{expire_time})")
+    void addMemebrship(Integer user_id, String create_time, String expire_time);
+
+    @Delete("delete from membership where user_id = #{id}")
+    void deleteMembership(Integer id);
+
 }

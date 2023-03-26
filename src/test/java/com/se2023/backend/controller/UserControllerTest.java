@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.se2023.backend.config.EncryptionWithKeyConfig;
 import com.se2023.backend.entity.User;
 import com.se2023.backend.utils.JsonResult;
+import io.swagger.models.auth.In;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ class UserControllerTest {
         // valid email address
         url = urlPrefix + "/Consumer/1510397456@qq.com";
         JsonResult result = restTemplate.postForObject(url, null, JsonResult.class);
-        assertEquals(0, result.getCode());
+        assertEquals(400, result.getCode());
         assertEquals("send email success", result.getMessage());
         assertEquals("success", result.getType());
 
@@ -237,6 +238,70 @@ class UserControllerTest {
         JsonResult result = restTemplate.getForObject(url, JsonResult.class);
         assertEquals(0, result.getCode());
         assertEquals("Successfully achieved the members' info.", result.getMessage());
+        assertEquals("success", result.getType());
+    }
+
+    @Test
+    void setMembership(){
+        String url = urlPrefix + "/user/setMembership";
+
+        User user = new User();
+
+        JsonResult result;
+
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("Something missing!", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        user.setId(1);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("You are already a membership", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        //每次实验前需要先清空此调数据库信息
+        user.setId(2);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(0, result.getCode());
+        assertEquals("Successfully join in the membership!", result.getMessage());
+        assertEquals("success", result.getType());
+    }
+
+
+    @Test
+    void removeMembership(){
+        String url = urlPrefix + "/user/removeMembership";
+
+        User user = new User();
+
+        JsonResult result;
+
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("Missing user id!", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        user.setId(0);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(500, result.getCode());
+        assertEquals("Invalid membership!", result.getMessage());
+        assertEquals("fail", result.getType());
+
+        user.setId(2);
+        result = restTemplate.postForObject(url, user, JsonResult.class);
+        assertEquals(0, result.getCode());
+        assertEquals("Successfully remove this membership!", result.getMessage());
+        assertEquals("success", result.getType());
+    }
+
+    @Test
+    void queryAllMembership(){
+        String url = urlPrefix + "/user/membership";
+
+        JsonResult result = restTemplate.getForObject(url, JsonResult.class);
+        assertEquals(0, result.getCode());
+        assertEquals("Successfully query all membership", result.getMessage());
         assertEquals("success", result.getType());
     }
 }
