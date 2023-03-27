@@ -33,7 +33,7 @@ public interface OrderMapper {
     @Select("select * from orders where userId = #{userId} and activityId = #{activityId} and status = #{status}")
     Order[] getOrdersByUserIdAndActivityIdAndStatus(Integer userId, Integer activityId, String status);
 
-    @Select("insert into orders (name, activityId, userId, status, remark, payMoney) values (#{name}, #{activityId}, #{userId}, #{status}, #{remark}, #{payMoney})")
+    @Select("insert into orders (name, activityId, userId, status, remark, payMoney, time) values (#{name}, #{activityId}, #{userId}, #{status}, #{remark}, #{payMoney}, #{time})")
     void addOrder(Order order);
 
     @Select("delete from orders where id = #{id}")

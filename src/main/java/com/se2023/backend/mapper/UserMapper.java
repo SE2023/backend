@@ -9,6 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+
+    @Select("select * from user where username = #{username}")
+    List<User> queryUserByName(String username);
     @Select("select * from user where id = #{id}")
     User queryUserById(Integer id);
 

@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(value="User",tags = "用户管理")
+@Api(value="User",tags = "User Management")
 @RestController
 public class UserController {
     private final UserMapper userMapper;
@@ -79,9 +79,15 @@ public class UserController {
         }
         //查询username是否存在
         String username_submit = userSubmit.getUsername();
-        User user = userMapper.queryUserByUsername(username_submit);
+        System.out.println(username_submit);
+        User user = null;
+        try {
+            user = userMapper.queryUserByUsername(username_submit);
+        } catch (Exception e) {
+            return new JsonResult(400, null, "Invalid username or password", "failed");
+        }
         if (user == null) {
-            return new JsonResult(400, null, "Invalid username", "failed");
+            return new JsonResult(400, null, "Invalid username or password", "failed");
         }
         // 检查密码是否正确
         String code_password = SecureUtil.md5(userSubmit.getPassword());
@@ -115,7 +121,7 @@ public class UserController {
                 return new JsonResult(0, map, "Manager login", "success");
             }
         } else {
-            return new JsonResult(400, null, "Invalid password", "failed");
+            return new JsonResult(400, null, "Invalid username or password", "failed");
         }
     }
 
