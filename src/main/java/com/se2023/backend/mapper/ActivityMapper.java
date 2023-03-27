@@ -16,6 +16,11 @@ public interface ActivityMapper {
     //删除活动
     @Select("delete from activity where id = #{id}")
     void deleteActivity();
+    @Select("select * from activity where facilityId = #{facilityId}")
+    Activity[] getActivityByFacilityId(Integer facilityId);
+
+    @Select("select timeUnityId from activity_time where activityId = #{activityId}")
+    Integer getTimeUnityIdByActivityId(Integer activityId);
 
     @Select("select * from activity where id = #{id}")
     Activity getActivityById(Integer id);

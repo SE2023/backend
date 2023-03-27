@@ -85,6 +85,9 @@ public class OrderController {
         DateTime dateTime = new DateTime();
         //将时间转化成字符串
         order.setTime(dateTime.toString());
+        //设置订单状态维unpaid
+        order.setStatus("unpaid");
+        order.setRemark("unpaid");
         orderMapper.addOrder(order);
         return new JsonResult(0, null, "Add order", "success");
     }
