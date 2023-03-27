@@ -24,4 +24,6 @@ public class Order {
     String remark;
 
     String payMoney;
+
+    String Time;
 }
