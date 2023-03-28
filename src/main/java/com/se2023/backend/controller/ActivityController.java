@@ -1,16 +1,16 @@
 package com.se2023.backend.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.se2023.backend.entity.Activity.Activity;
 import com.se2023.backend.entity.Others.TimeUnity;
 import com.se2023.backend.mapper.ActivityMapper;
 import com.se2023.backend.mapper.TimeUnityMapper;
 import com.se2023.backend.utils.JsonResult;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @RestController
 public class ActivityController {
@@ -37,22 +37,57 @@ public class ActivityController {
         return new JsonResult(0, null, "Add activity", "success");
     }
 
-    @GetMapping("/activity/{startTime}/{endTime}")
-    public JsonResult getActivityByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime){
+    @GetMapping("/activity/date_time/{date}/{startTime}/{endTime}")
+    public JsonResult getActivityByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime, @PathVariable("date") String date){
         //根据时间段获取活动, 先根据时间段获取时间单元，再根据时间单元获取活动
-        TimeUnity[] timeUnity = TimeUnityMapper.getTimeUnityByTime(startTime, endTime);
+//        System.out.println(date + " " + startTime + " " + endTime);
+        TimeUnity[] timeUnity = TimeUnityMapper.getTimeUnityByDateTime(date, startTime, endTime);
+        System.out.println(Arrays.toString(timeUnity));
         Integer[] timeUnityId = new Integer[timeUnity.length];
         for (int i = 0; i < timeUnity.length; i++) {
             timeUnityId[i] = timeUnity[i].getId();
         }
-        List<Activity> activity_list = null;
-        for (int i = 0; i < timeUnityId.length; i++) {
-            Integer[] activity_id_list = activityMapper.getActivityByTimeUnity(timeUnityId[i]);
-            for (int j = 0; j < activity_id_list.length; j++) {
-                Activity activity = activityMapper.getActivityById(activity_id_list[j]);
-                activity_list.add(activity);
+        ArrayList<Activity> activity_list = new ArrayList<>();
+        for (Integer value : timeUnityId) {
+            Integer[] activity_id_list = activityMapper.getActivityByTimeUnity(value);
+            for (Integer integer : activity_id_list) {
+                Activity activity = activityMapper.getActivityById(integer);
+                if (activity != null){
+                    activity_list.add(activity);
+                }
             }
         }
+
         return new JsonResult(0, activity_list, "Get activity by time", "success");
+    }
+
+    @GetMapping("/activity/facility/{id}")
+    public JsonResult getActivityByFacility(@PathVariable("id") Integer id){
+        //根据设施获取活动
+        Activity[] activity_list = activityMapper.getActivityByFacilityId(id);
+        ArrayList<JSONObject> result = new ArrayList<>();
+        for (Activity activity : activity_list) {
+            //根据活动id获取时间单元id
+            int activityId = activity.getId();
+            System.out.println(activityId);
+            try {
+                int timeUnityId = activityMapper.getTimeUnityIdByActivityId(activityId);
+                //根据时间单元id获取开始时间和结束时间
+                TimeUnity timeUnity = TimeUnityMapper.getTimeUnityById(timeUnityId);
+                String startTime = timeUnity.getStartTime();
+                String endTime = timeUnity.getEndTime();
+                String date = timeUnity.getDate();
+                JSONObject ac = new JSONObject();
+                ac.put("activity", activity);
+                ac.put("starttime", startTime);
+                ac.put("endtime", endTime);
+                ac.put("date", date);
+                result.add(ac);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+        return new JsonResult(0, result, "Get activity by facility", "success");
     }
 }
