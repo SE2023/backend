@@ -57,7 +57,6 @@ public class ActivityController {
                 }
             }
         }
-
         return new JsonResult(0, activity_list, "Get activity by time", "success");
     }
 
@@ -84,7 +83,6 @@ public class ActivityController {
                 ac.put("date", date);
                 result.add(ac);
             } catch (Exception e) {
-                e.printStackTrace();
                 break;
             }
         }
