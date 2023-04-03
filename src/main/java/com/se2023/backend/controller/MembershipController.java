@@ -12,6 +12,7 @@ import springfox.documentation.spring.web.json.Json;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 @Api(value="Membership", tags = "Membership Management")
 @RestController
@@ -25,12 +26,18 @@ public class MembershipController {
         this.membershipMapper = membershipMapper;
     }
 
-    @PostMapping(value="/membership")
-    public JsonResult setMembership(@RequestBody User user, Integer balance){
+    @PostMapping(value="/membership/set/{id}")
+    @ResponseBody
+    public JsonResult setMembership(@PathVariable("id") Integer id, @RequestBody Map<String,Double> map){
+        Double balance= map.get("balance");
+        if (balance==null){
+            return new JsonResult(400,null,"Balance can not under 100 dollars","failed");
+        }
         if (balance<=100){
             return new JsonResult(400,null,"Balance can not under 100 dollars","failed");
         }
-        if(user.getId()!=null){
+        User user = userMapper.queryUserById(id);
+        if(user!=null){
             //check 是否已经是membership
             Integer user_id=user.getId();
             if (membershipMapper.queryMembership(user_id)==null){
@@ -55,14 +62,14 @@ public class MembershipController {
         }
     }
 
-    @PostMapping(value="/membership/{id}")
+    @PostMapping(value="/membership/remove/{id}")
     public JsonResult removeMembership(@PathVariable("id") Integer id){
         if(userMapper.queryUserById(id)==null){
             return new JsonResult(400,null,"Invalid user id.","failed");
         }
         else {
             User user = userMapper.queryUserById(id);
-            if (user.getId() != null) {
+            if (user != null) {
                 Integer user_id = user.getId();
                 if (membershipMapper.queryMembership(user_id) != null) {
                     membershipMapper.removeMembership(user.getId());
@@ -93,7 +100,8 @@ public class MembershipController {
     }
 
     @PostMapping(value="/membership/consume/{id}")
-    public JsonResult consumeBalance(@PathVariable("id") Integer id,Integer cost){
+    public JsonResult consumeBalance(@PathVariable("id") Integer id,@RequestBody Map<String,Integer> map){
+        Integer cost= map.get("cost");
         if(membershipMapper.queryMembership(id)==null){
             return new JsonResult(400,null,"Invalid membership id.","failed");
         }else{
@@ -107,8 +115,24 @@ public class MembershipController {
                 return new JsonResult(0,member,"Successfully pay but set account to user","success");
             }else{
                 member.setBalance(balance-cost);
+                membershipMapper.consumeBalance(id,balance-cost);
                 return new JsonResult(0,member,"Successfully pay","success");
             }
         }
     }
+
+    @PostMapping(value="/membership/recharge/{id}")
+    public JsonResult rechargeBalance(@PathVariable("id") Integer id,@RequestBody Map<String,Integer> map){
+        Integer recharge= map.get("recharge");
+        if(membershipMapper.queryMembership(id)==null){
+            return new JsonResult(400,null,"Invalid membership id.","failed");
+        }else{
+            Membership member=membershipMapper.queryMembership(id);
+            Integer balance = member.getBalance();
+            member.setBalance(balance+recharge);
+            membershipMapper.consumeBalance(id,balance+recharge);
+            return new JsonResult(0,member,"Successfully recharge","success");
+            }
+        }
+
 }
