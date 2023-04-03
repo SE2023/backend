@@ -18,8 +18,8 @@ public interface TimeUnityMapper {
     @Select("select * from time_unity where activityId = #{activityId} and status = #{status}")
     TimeUnity[] getTimeUnityByActivityIdAndStatus(Integer activityId, String status);
 
-    @Select("select * from time_unity where startTime = #{startTime} and endTime = #{endTime}")
-    TimeUnity[] getTimeUnityByTime(String startTime, String endTime);
+    @Select("select * from time_unity where date = #{date} and startTime = #{startTime} and endTime = #{endTime}")
+    TimeUnity[] getTimeUnityByDateTime(String date, String startTime, String endTime);
 
     @Select("select * from time_unity where activityId = #{activityId} and status = #{status} and time = #{time}")
     TimeUnity[] getTimeUnityByActivityIdAndStatusAndTime(Integer activityId, String status, String time);

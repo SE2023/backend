@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(value="User",tags = "用户管理")
+@Api(value="User",tags = "User Management")
 @RestController
 public class UserController {
     private final UserMapper userMapper;
@@ -79,9 +79,15 @@ public class UserController {
         }
         //查询username是否存在
         String username_submit = userSubmit.getUsername();
-        User user = userMapper.queryUserByUsername(username_submit);
+        System.out.println(username_submit);
+        User user = null;
+        try {
+            user = userMapper.queryUserByUsername(username_submit);
+        } catch (Exception e) {
+            return new JsonResult(400, null, "Invalid username or password", "failed");
+        }
         if (user == null) {
-            return new JsonResult(400, null, "Invalid username", "failed");
+            return new JsonResult(400, null, "Invalid username or password", "failed");
         }
         // 检查密码是否正确
         String code_password = SecureUtil.md5(userSubmit.getPassword());
@@ -115,7 +121,7 @@ public class UserController {
                 return new JsonResult(0, map, "Manager login", "success");
             }
         } else {
-            return new JsonResult(400, null, "Invalid password", "failed");
+            return new JsonResult(400, null, "Invalid username or password", "failed");
         }
     }
 
@@ -150,12 +156,12 @@ public class UserController {
     public JsonResult c_register(@RequestBody User user) {
         //确保所有信息输入完整
         if (user.getUsername() == null || user.getPassword() == null || user.getEmail() == null || user.getConfirmCode() == null) {
-            return new JsonResult(500, null, "Something missing!", "failed");
+            return new JsonResult(400, null, "Something missing!", "failed");
         }
         //控制username不能重复
         String username_submit = user.getUsername();
         if (userMapper.queryUserByUsername(username_submit) != null) {
-            return new JsonResult(500, null, "This username is already used.", "failed");
+            return new JsonResult(400, null, "This username is already used.", "failed");
         }
 //        //检查重复的密码是否一致
 //        if(!user.getPassword().equals()){
@@ -165,11 +171,11 @@ public class UserController {
         //获取输入的email的正确验证码
         String email = user.getEmail();
         if (emailMapper.queryConfirmCodeByEmail(email) == null) {
-            return new JsonResult(500, null, "Invalid email", "failed");
+            return new JsonResult(400, null, "Invalid email", "failed");
         } else {
             String right_confirm = emailMapper.queryConfirmCodeByEmail(email);
             if (!user.getConfirmCode().equals(right_confirm)) {
-                return new JsonResult(500, null, "Invalid confirm code", "failed");
+                return new JsonResult(400, null, "Invalid confirm code", "failed");
             }
         }
         try {
@@ -307,54 +313,4 @@ public class UserController {
         return new JsonResult(0, userMapper.queryUserByRole("Member"), "Successfully achieved the members' info.", "success");
     }
 
-
-
-
-    @PostMapping(value="/user/setMembership")
-    public JsonResult setMembership(@RequestBody User user){
-        if(user.getId()!=null){
-            //check 是否已经是membership
-            Integer user_id=user.getId();
-            if (userMapper.queryMembership(user_id)==null){
-                //user表里set membership为1
-                userMapper.setMembership(user.getId());
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                String create_time = sdf.format(new Date());
-                Date ex=new Date();
-                ex.setTime(ex.getTime()+365*24*60*60*1000L );//会员默认保质期一年
-                String expire_time=sdf.format(ex);
-                //membership表里add对象
-                userMapper.addMemebrship(user_id,create_time,expire_time);
-                return new JsonResult(0, null,"Successfully join in the membership!", "success");
-            }
-            else{
-                System.out.println(userMapper.queryMembership(user_id));
-                return new JsonResult(500, null,"You are already a membership", "fail");
-            }
-        }
-        else{
-            return  new JsonResult(500,null,"Something missing!","fail");
-        }
-    }
-
-    @PostMapping(value="/user/removeMembership")
-    public JsonResult removeMembership(@RequestBody User user){
-        if(user.getId()!=null){
-            Integer user_id=user.getId();
-            if(userMapper.queryMembership(user_id)!=null){
-                userMapper.removeMembership(user.getId());
-                userMapper.deleteMembership(user.getId());
-                return new JsonResult(0,null,"Successfully remove this membership!","success");
-            }else{
-                return new JsonResult(500,null,"Invalid membership!","fail");
-            }
-        }else{
-            return new JsonResult(500,null,"Missing user id!","fail");
-        }
-    }
-
-    @GetMapping(value="/user/membership")
-    public JsonResult queryAllMembership(){
-        return new JsonResult(0, userMapper.queryAllMembership(),"Successfully query all membership", "success");
-    }
 }

@@ -17,9 +17,9 @@ public class TimeUnity {
     @TableId(value = "id", type = IdType.AUTO)
     Integer id;
 
-    Date date;
+    String date;
 
-    Time startTime;
+    String startTime;
 
-    Time endTime;
+    String endTime;
 }
