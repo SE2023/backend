@@ -300,7 +300,7 @@ public class UserController {
 
     @GetMapping(value = "/user/nonmembers")
     public JsonResult queryAllNonmembers() {
-        return new JsonResult(0, userMapper.queryUserByRole("Nonmember"), "Successfully achieved the nonmembers' info.", "success");
+        return new JsonResult(0, userMapper.queryAllNonmembers(), "Successfully achieved the nonmembers' info.", "success");
     }
 
     @GetMapping(value = "/user/staffs")
