@@ -54,11 +54,11 @@ public class MembershipController {
             }
             else{
                 System.out.println(membershipMapper.queryMembership(user_id));
-                return new JsonResult(400, null,"You are already a membership", "fail");
+                return new JsonResult(400, null,"You are already a membership", "failed");
             }
         }
         else{
-            return  new JsonResult(400,null,"Something missing!","fail");
+            return  new JsonResult(400,null,"Something missing!","failed");
         }
     }
 
@@ -76,10 +76,10 @@ public class MembershipController {
                     membershipMapper.deleteMembership(user.getId());
                     return new JsonResult(0, null, "Successfully remove this membership!", "success");
                 } else {
-                    return new JsonResult(500, null, "Invalid membership!", "fail");
+                    return new JsonResult(500, null, "Invalid membership!", "failed");
                 }
             } else {
-                return new JsonResult(500, null, "Missing user id!", "fail");
+                return new JsonResult(500, null, "Missing user id!", "failed");
             }
         }
     }
@@ -89,7 +89,7 @@ public class MembershipController {
         return new JsonResult(0, membershipMapper.queryAllMembership(),"Successfully query all membership", "success");
     }
 
-    @GetMapping(value="/membership/{id}")
+    @PostMapping(value="/membership/{id}")
     public JsonResult queryMembership(@PathVariable("id") Integer id){
         if(userMapper.queryUserById(id)==null){
             return new JsonResult(400,null,"Invalid user id.","failed");
@@ -122,17 +122,17 @@ public class MembershipController {
     }
 
     @PostMapping(value="/membership/recharge/{id}")
-    public JsonResult rechargeBalance(@PathVariable("id") Integer id,@RequestBody Map<String,Integer> map){
-        Integer recharge= map.get("recharge");
+    public JsonResult rechargeBalance(@PathVariable("id") Integer id,@RequestBody Map<String,Double> map){
+        Double recharge= map.get("recharge");
         if(membershipMapper.queryMembership(id)==null){
             return new JsonResult(400,null,"Invalid membership id.","failed");
         }else{
             Membership member=membershipMapper.queryMembership(id);
             Integer balance = member.getBalance();
-            member.setBalance(balance+recharge);
-            membershipMapper.consumeBalance(id,balance+recharge);
+            member.setBalance((int) (balance+recharge));
+            membershipMapper.consumeBalance(id, (int) (balance+recharge));
             return new JsonResult(0,member,"Successfully recharge","success");
-            }
         }
+    }
 
 }
