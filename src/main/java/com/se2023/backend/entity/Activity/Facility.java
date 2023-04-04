@@ -19,8 +19,6 @@ public class Facility {
 
     Integer sportsCentreId;
 
-    Integer capacity;
-
     String status;
 
     String type;

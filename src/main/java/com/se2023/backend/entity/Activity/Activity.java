@@ -24,4 +24,7 @@ public class Activity {
     Integer userAmount;
 
     String status;
+
+
+    Integer capacity;
 }

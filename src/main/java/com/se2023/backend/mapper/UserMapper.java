@@ -9,6 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+    @Update("update user set balance = #{balance} where id = #{id}")
+    void updateBalance(Integer id, Integer balance);
 
     @Select("select * from user where username = #{username}")
     List<User> queryUserByName(String username);
