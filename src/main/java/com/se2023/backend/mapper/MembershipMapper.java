@@ -32,5 +32,4 @@ public interface MembershipMapper {
     @Delete("delete from membership where user_id = #{id}")
     void deleteMembership(Integer id);
 
-
 }
