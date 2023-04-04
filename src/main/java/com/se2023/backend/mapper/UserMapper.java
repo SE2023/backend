@@ -26,6 +26,9 @@ public interface UserMapper {
     @Select("select * from user where role <> 'Manager' and membership = 0")
     List<User> queryAllNonmembers();
 
+    @Select("select * from user where role <> 'Manager' and membership = 1")
+    List<User> queryAllMembers();
+
     @Select("select email from user where confirmCode = #{confirmCode}")
     User selectUserByConfirmCode(@Param("confirmCode")String confirmCode);
 
