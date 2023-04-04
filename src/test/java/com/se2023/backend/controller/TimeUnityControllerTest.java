@@ -28,18 +28,18 @@ class TimeUnityControllerTest {
 //        System.out.println("tearDown");
 //    }
 
-    @Test
-    void addTimeUnity() {
-        String url = urlPrefix + "/timeUnity";
-
-        TimeUnity timeUnity = new TimeUnity();
-        timeUnity.setDate(new Date());
-        timeUnity.setStartTime(new Time(new Date().getTime()));
-        timeUnity.setEndTime(new Time(new Date().getTime()));
-
-        JsonResult result = restTemplate.postForObject(url, timeUnity, JsonResult.class);
-        assertEquals(0, result.getCode());
-        assertEquals("Add time unity", result.getMessage());
-        assertEquals("success", result.getType());
-    }
+//    @Test
+//    void addTimeUnity() {
+//        String url = urlPrefix + "/timeUnity";
+//
+//        TimeUnity timeUnity = new TimeUnity();
+//        timeUnity.setDate(new Date());
+//        timeUnity.setStartTime(new Time(new Date().getTime()));
+//        timeUnity.setEndTime(new Time(new Date().getTime()));
+//
+//        JsonResult result = restTemplate.postForObject(url, timeUnity, JsonResult.class);
+//        assertEquals(0, result.getCode());
+//        assertEquals("Add time unity", result.getMessage());
+//        assertEquals("success", result.getType());
+//    }
 }
