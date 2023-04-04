@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface ActivityMapper {
     //添加活动
-    @Select("insert into activity (name, facilityId, price, note, userAmount, status) values (#{name}, #{facilityId}, #{price}, #{note}, #{userAmount}, #{status})")
+    @Select("insert into activity (name, facilityId, price, note, userAmount, status, capacity) values (#{name}, #{facilityId}, #{price}, #{note}, #{userAmount}, #{status}, #(capacity)")
     void addActivity(Activity activity);
 
     //删除活动
@@ -24,6 +24,9 @@ public interface ActivityMapper {
 
     @Select("select * from activity where id = #{id}")
     Activity getActivityById(Integer id);
+
+    @Select("select capacity from activity where id = #{activityId}")
+    Integer getCapacityByActivityId(Integer activityId);
 
     @Select("select * from activity")
     Activity[] getActivity();

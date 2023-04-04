@@ -276,6 +276,7 @@ public class UserController {
         res.put("id", user.getId());
         res.put("username", user.getUsername());
         res.put("email", user.getEmail());
+        res.put("balance", user.getBalance());
         JSONObject role = new JSONObject();
         role.put("roleName", user.getRole());
         role.put("value", user.getRole());

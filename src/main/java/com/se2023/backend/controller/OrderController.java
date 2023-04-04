@@ -7,6 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.se2023.backend.config.EncryptionWithKeyConfig;
 import com.se2023.backend.entity.User;
+import com.se2023.backend.mapper.ActivityMapper;
 import com.se2023.backend.mapper.UserMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +22,15 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     private final UserMapper userMapper;
+
+    private final ActivityMapper activityMapper;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
-    public OrderController(OrderMapper orderMapper, UserMapper userMapper) {
+    public OrderController(OrderMapper orderMapper, UserMapper userMapper, ActivityMapper activityMapper) {
         this.orderMapper = orderMapper;
         this.userMapper = userMapper;
+        this.activityMapper = activityMapper;
     }
 
     @GetMapping("/order")
@@ -54,12 +58,10 @@ public class OrderController {
         //新建一个订单，这里没有考虑人数上限的问题
         //先获取活动的id
         Integer activityId = order.getActivityId();
-        //通过活动id拿到facility的id
-        Integer facilityId = orderMapper.getFacilityId(activityId);
-        //获取活动的人数上限
-        Integer maxPeople = orderMapper.getCapacity(facilityId);
+        //获取活动的capacity
+        Integer maxPeople = activityMapper.getCapacityByActivityId(activityId);
         //获取当前人数
-        Integer currentPeople = (Integer)redisTemplate.opsForValue().get(facilityId.toString());
+        Integer currentPeople = (Integer)redisTemplate.opsForValue().get(activityId.toString());
         //如果当前人数已经达到上限，就不创建订单
         if (currentPeople == null) {
             currentPeople = 0;
@@ -71,7 +73,7 @@ public class OrderController {
             currentPeople = currentPeople + 1;
         }
         //同时人数上限+1, 记录在redis
-        redisTemplate.opsForValue().set(facilityId.toString(), currentPeople);
+        redisTemplate.opsForValue().set(activityId.toString(), currentPeople);
         //创建订单
         //先获取用户的id
         //通过token获取用户的id

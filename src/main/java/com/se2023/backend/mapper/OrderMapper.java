@@ -36,6 +36,8 @@ public interface OrderMapper {
     @Select("insert into orders (name, activityId, userId, status, remark, payMoney, time) values (#{name}, #{activityId}, #{userId}, #{status}, #{remark}, #{payMoney}, #{time})")
     void addOrder(Order order);
 
+
+
     @Select("delete from orders where id = #{id}")
     void deleteOrder(Integer id);
 
@@ -44,4 +46,7 @@ public interface OrderMapper {
 
     @Select("select facilityId from activity where id = #{id}")
     Integer getFacilityId(Integer id);
+
+    @Select("update orders set status = #{status} where id = #{id}")
+    void updateOrderStatus(Integer id, String status);
 }
