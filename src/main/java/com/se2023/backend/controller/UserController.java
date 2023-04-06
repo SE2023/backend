@@ -314,4 +314,14 @@ public class UserController {
         return new JsonResult(0, userMapper.queryAllMembers(), "Successfully achieved the members' info.", "success");
     }
 
+    @DeleteMapping(value = "/user/{username}")
+    public JsonResult deleteUserByUsername(@PathVariable("username") String username) {
+        try {
+            userMapper.deleteUserByUsername(username);
+            return new JsonResult(0, null, "Successfully deleted the user.", "success");
+        } catch (Exception e) {
+            System.out.println(e);
+            return new JsonResult(500, null, "Failed to delete the user.", "failed");
+        }
+    }
 }
