@@ -40,6 +40,6 @@ public interface UserMapper {
     @Select("insert into user (username, password, email, role) values (#{username}, #{password}, #{email}, #{role})")
     void addUser(User user);
 
-
-
+    @Select("delete from user where username = #{username}")
+    void deleteUserByUsername(String username);
 }

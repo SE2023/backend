@@ -17,7 +17,7 @@ public class Membership {
     Integer user_id;
     String create_time;
     String expire_time;
-    Integer balance;
+    Double balance;
 
     public String getCreate_time() {
         return create_time;
@@ -35,11 +35,21 @@ public class Membership {
         this.expire_time = expire_time;
     }
 
-    public Integer getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(Integer balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return "Membership{" +
+                "user_id=" + user_id +
+                ", create_time='" + create_time + '\'' +
+                ", expire_time='" + expire_time + '\'' +
+                ", balance=" + balance +
+                '}';
     }
 }
