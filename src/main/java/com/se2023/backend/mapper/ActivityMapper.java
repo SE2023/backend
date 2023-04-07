@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper
 public interface ActivityMapper {
     //添加活动
-    @Select("insert into activity (name, facilityId, price, note, userAmount, status, capacity) values (#{name}, #{facilityId}, #{price}, #{note}, #{userAmount}, #{status}, #(capacity)")
+    @Select("insert into activity (name, facilityId, price, note, userAmount, status, capacity) values (#{name}, #{facilityId}, #{price}, #{note}, #{userAmount}, #{status}, #{capacity})")
     void addActivity(Activity activity);
 
     //删除活动

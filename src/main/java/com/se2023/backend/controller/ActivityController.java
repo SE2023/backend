@@ -37,7 +37,7 @@ public class ActivityController {
         activityMapper.addActivity(activity);
         Integer activityId = activityMapper.getActivityId(activity);
         activityMapper.addActivityTimeUnity(activityId, timeUnityId, activity.getUserAmount());
-        return new JsonResult(0, null, "Add activity", "success");
+        return new JsonResult(0, activity, "Add activity", "success");
     }
 
     @GetMapping("/activity/date_time/{date}/{startTime}/{endTime}")
