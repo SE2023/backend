@@ -313,4 +313,5 @@ public class UserController {
         return new JsonResult(0, userMapper.queryUserByRole("Member"), "Successfully achieved the members' info.", "success");
     }
 
+
 }

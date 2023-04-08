@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MembershipMapper {
@@ -14,22 +15,23 @@ public interface MembershipMapper {
     @Update("update user set membership=1 where id = #{id}")
     void setMembership(Integer id);
 
+
+    @Select("insert into membership(user_id,create_time,expire_time, balance) values (#{user_id}, #{create_time}, #{expire_time}, #{balance})")
+    void addMemebrship(Membership member);
+
+    @Delete("delete from membership where user_id = #{id}")
+    void deleteMembership(Integer id);
+
     @Update("update user set membership=null where id = #{id}")
     void removeMembership(Integer id);
 
     @Update("update membership set balance=#{remain} where user_id=#{user_id} ")
-    void consumeBalance(Integer user_id,Integer remain);
+    void updateBalance(Integer user_id, Double remain);
 
     @Select("select * from membership")
-    List<Membership> queryAllMembership();
+    List <Map<String,Object>> queryAllMembership();
 
     @Select("select * from membership where user_id = #{user_id}")
-    Membership queryMembership(Integer user_id);
-
-    @Select("insert into membership(user_id,create_time,expire_time, balance) values(#{user_id}, #{create_time}, #{expire_time}, #{balance})")
-    void addMemebrship(Integer user_id, String create_time, String expire_time, Double balance);
-
-    @Delete("delete from membership where user_id = #{id}")
-    void deleteMembership(Integer id);
+    Map<String,Object> queryMembership(Integer user_id);
 
 }
