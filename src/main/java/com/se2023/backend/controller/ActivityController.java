@@ -2,15 +2,18 @@ package com.se2023.backend.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.se2023.backend.entity.Activity.Activity;
+import com.se2023.backend.entity.Activity.ActivityWithTime;
 import com.se2023.backend.entity.Others.TimeUnity;
 import com.se2023.backend.mapper.ActivityMapper;
 import com.se2023.backend.mapper.TimeUnityMapper;
 import com.se2023.backend.utils.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 public class ActivityController {
@@ -34,7 +37,7 @@ public class ActivityController {
         activityMapper.addActivity(activity);
         Integer activityId = activityMapper.getActivityId(activity);
         activityMapper.addActivityTimeUnity(activityId, timeUnityId, activity.getUserAmount());
-        return new JsonResult(0, null, "Add activity", "success");
+        return new JsonResult(0, activity, "Add activity", "success");
     }
 
     @GetMapping("/activity/date_time/{date}/{startTime}/{endTime}")
@@ -58,6 +61,13 @@ public class ActivityController {
             }
         }
         return new JsonResult(0, activity_list, "Get activity by time", "success");
+    }
+
+    @GetMapping("/activity/all-with-time")
+    public JsonResult getActivitiesWithTime() {
+        ActivityWithTime[] activitiesWithTime = activityMapper.getActivityWithTime();
+
+        return new JsonResult(0, activitiesWithTime, "Get activities with time", "success");
     }
 
     @GetMapping("/activity/facility/{id}")
