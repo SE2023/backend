@@ -22,4 +22,8 @@ public class Facility {
     String status;
 
     String type;
+
+    Integer manager_id;
+
+    String manager_tel;
 }
