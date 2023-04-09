@@ -31,4 +31,16 @@ public class FacilityController{
         return new JsonResult(0, facilityMapper.getFacilityById(id), "Get facility by id", "success");
     }
 
+    @DeleteMapping("/facility/{id}")
+    public JsonResult deleteFacilityById(@PathVariable("id") Integer id){
+        facilityMapper.deleteFacilityById(id);
+        return new JsonResult(0, null, "Delete facility by id", "success");
+    }
+
+    @PutMapping("/facility/{id}")
+    public JsonResult updateFacilityById(@PathVariable("id") Integer id, @RequestBody Facility facility){
+        System.out.println(facility);
+        facilityMapper.updateFacilityById(id, facility);
+        return new JsonResult(0, null, "Update facility by id", "success");
+    }
 }

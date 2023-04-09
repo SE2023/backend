@@ -19,9 +19,11 @@ public class Facility {
 
     Integer sportsCentreId;
 
-    Integer capacity;
-
     String status;
 
     String type;
+
+    Integer manager_id;
+
+    String manager_tel;
 }

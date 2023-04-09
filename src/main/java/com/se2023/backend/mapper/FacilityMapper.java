@@ -8,16 +8,19 @@ import org.apache.ibatis.annotations.Select;
 public interface FacilityMapper {
 
     //添加设施
-    @Select("insert into facility (name, sportsCentreId, capacity, status, type) values (#{name}, #{sportsCentreId}, #{capacity}, #{status}, #{type})")
+    @Select("insert into facility (name, sportsCentreId, status, type, manager_id, manager_tel) values (#{name}, #{sportsCentreId},#{status}, #{type}, #{manager_id}, #{manager_tel})")
     void addFacility(Facility facility);
 
     //删除设施
     @Select("delete from facility where id = #{id}")
-    void deleteFacility();
+    void deleteFacilityById(Integer id);
 
     @Select("select * from facility where id = #{id}")
     Facility getFacilityById(Integer id);
 
     @Select("select * from facility")
     Facility[] getFacility();
+
+    @Select("update facility set name = #{facility.name}, sportsCentreId = #{facility.sportsCentreId}, status = #{facility.status}, type = #{facility.type} where id = #{id}")
+    void updateFacilityById(Integer id, Facility facility);
 }

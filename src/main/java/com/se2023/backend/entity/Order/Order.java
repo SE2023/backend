@@ -21,7 +21,9 @@ public class Order {
 
     String status;
 
-    String note;
+    String remark;
 
-    Float payMoney;
+    String payMoney;
+
+    String Time;
 }
