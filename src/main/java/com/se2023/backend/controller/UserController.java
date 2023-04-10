@@ -276,6 +276,7 @@ public class UserController {
         res.put("id", user.getId());
         res.put("username", user.getUsername());
         res.put("email", user.getEmail());
+        res.put("balance", user.getBalance());
         JSONObject role = new JSONObject();
         role.put("roleName", user.getRole());
         role.put("value", user.getRole());
@@ -300,7 +301,7 @@ public class UserController {
 
     @GetMapping(value = "/user/nonmembers")
     public JsonResult queryAllNonmembers() {
-        return new JsonResult(0, userMapper.queryUserByRole("Nonmember"), "Successfully achieved the nonmembers' info.", "success");
+        return new JsonResult(0, userMapper.queryAllNonmembers(), "Successfully achieved the nonmembers' info.", "success");
     }
 
     @GetMapping(value = "/user/staffs")
@@ -310,8 +311,17 @@ public class UserController {
 
     @GetMapping(value = "/user/members")
     public JsonResult queryAllMembers() {
-        return new JsonResult(0, userMapper.queryUserByRole("Member"), "Successfully achieved the members' info.", "success");
+        return new JsonResult(0, userMapper.queryAllMembers(), "Successfully achieved the members' info.", "success");
     }
 
-
+    @DeleteMapping(value = "/user/{username}")
+    public JsonResult deleteUserByUsername(@PathVariable("username") String username) {
+        try {
+            userMapper.deleteUserByUsername(username);
+            return new JsonResult(0, null, "Successfully deleted the user.", "success");
+        } catch (Exception e) {
+            System.out.println(e);
+            return new JsonResult(500, null, "Failed to delete the user.", "failed");
+        }
+    }
 }

@@ -9,6 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+    @Update("update user set balance = #{balance} where id = #{id}")
+    void updateBalance(Integer id, Integer balance);
 
     @Select("select * from user where username = #{username}")
     List<User> queryUserByName(String username);
@@ -23,6 +25,12 @@ public interface UserMapper {
     @Select("select * from user where role = #{role}")
     List<User> queryUserByRole(String role);
 
+    @Select("select * from user where role <> 'Manager' and membership = 0")
+    List<User> queryAllNonmembers();
+
+    @Select("select * from user where role <> 'Manager' and membership = 1")
+    List<User> queryAllMembers();
+
     @Select("select email from user where confirmCode = #{confirmCode}")
     User selectUserByConfirmCode(@Param("confirmCode")String confirmCode);
 
@@ -32,6 +40,6 @@ public interface UserMapper {
     @Select("insert into user (username, password, email, role) values (#{username}, #{password}, #{email}, #{role})")
     void addUser(User user);
 
-
-
+    @Select("delete from user where username = #{username}")
+    void deleteUserByUsername(String username);
 }

@@ -26,12 +26,15 @@ public interface MembershipMapper {
     void removeMembership(Integer id);
 
     @Update("update membership set balance=#{remain} where user_id=#{user_id} ")
-    void updateBalance(Integer user_id, Double remain);
+    void consumeBalance(Integer user_id, double remain);
+
 
     @Select("select * from membership")
     List <Map<String,Object>> queryAllMembership();
 
     @Select("select * from membership where user_id = #{user_id}")
-    Map<String,Object> queryMembership(Integer user_id);
+
+//    Map<String,Object> queryMembership(Integer user_id);
+    Membership queryMembership(Integer user_id);
 
 }

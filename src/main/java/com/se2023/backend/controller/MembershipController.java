@@ -10,7 +10,6 @@ import com.se2023.backend.utils.JsonResult;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
 import java.lang.reflect.Member;
 import java.text.SimpleDateFormat;
@@ -35,10 +34,10 @@ public class MembershipController {
     public JsonResult setMembership(@PathVariable("id") Integer id, @RequestBody Map<String,Double> map){
         Double balance= map.get("balance");
         if (balance==null){
-            return new JsonResult(400,null,"Balance can not under 100 dollars","failed");
+            return new JsonResult(400,null,"Balance can not be less than 100 dollars","failed");
         }
-        if (balance<=100){
-            return new JsonResult(400,null,"Balance can not under 100 dollars","failed");
+        if (balance<100){
+            return new JsonResult(400,null,"Balance can not be less than 100 dollars","failed");
         }
         User user = userMapper.queryUserById(id);
         if(user!=null){
@@ -54,7 +53,8 @@ public class MembershipController {
                 String expire_time=sdf.format(ex);
                 Membership member=new Membership(user_id,create_time,expire_time,balance);
                 membershipMapper.addMemebrship(member);
-                return new JsonResult(0, null,"Successfully join in the membership!", "success");
+                return new JsonResult(0, member,"Successfully join in the membership!", "success");
+
             }
             else{
                 System.out.println(membershipMapper.queryMembership(user_id));
@@ -99,8 +99,13 @@ public class MembershipController {
         if(userMapper.queryUserById(id)==null){
             return new JsonResult(400,null,"Invalid user id.","failed");
         }else{
-            Map<String,Object> member=membershipMapper.queryMembership(id);
-            return new JsonResult(0,member,"Successfully get membership","success");
+            List<Map<String,Object>> members=membershipMapper.queryAllMembership();
+            for (Map<String,Object> member:members){
+                if (member.get("user_id").equals(id)){
+                    return new JsonResult(0,member,"Successfully get membership","success");
+                }
+            }
+            return new JsonResult(400,null,"Invalid membership id.","failed");
         }
     }
 
@@ -110,9 +115,7 @@ public class MembershipController {
         if(membershipMapper.queryMembership(id)==null){
             return new JsonResult(400,null,"Invalid membership id.","failed");
         }else{
-            Membership member= (Membership) membershipMapper.queryMembership(id);
-
-
+            Membership member= membershipMapper.queryMembership(id);
             Double balance = member.getBalance();
             if(balance<cost){
                 return new JsonResult(400,null,"Cost is not enough to pay","failed");
@@ -122,7 +125,7 @@ public class MembershipController {
                 return new JsonResult(0,member.getBalance(),"Successfully pay but set account to user","success");
             }else{
                 member.setBalance(balance-cost);
-                membershipMapper.updateBalance(id,balance-cost);
+                membershipMapper.consumeBalance(id,balance-cost);
                 return new JsonResult(0,member.getBalance(),"Successfully pay","success");
 
             }
@@ -135,12 +138,12 @@ public class MembershipController {
         if(membershipMapper.queryMembership(id)==null){
             return new JsonResult(400,null,"Invalid membership id.","failed");
         }else{
-            Membership member= (Membership) membershipMapper.queryMembership(id);
+            Membership member= membershipMapper.queryMembership(id);
             Double balance = member.getBalance();
             member.setBalance(balance+recharge);
-            membershipMapper.updateBalance(id, (balance+recharge));
+            membershipMapper.consumeBalance(id, (int) (balance+recharge));
             return new JsonResult(0,member,"Successfully recharge","success");
-            }
         }
+    }
 
 }

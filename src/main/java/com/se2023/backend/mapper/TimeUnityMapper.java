@@ -24,7 +24,7 @@ public interface TimeUnityMapper {
     @Select("select * from time_unity where activityId = #{activityId} and status = #{status} and time = #{time}")
     TimeUnity[] getTimeUnityByActivityIdAndStatusAndTime(Integer activityId, String status, String time);
 
-    @Select("insert into time_unity (activityId, status, time) values (#{activityId}, #{status}, #{time})")
+    @Select("insert into time_unity (date, startTime, endTime) values (#{date}, #{startTime}, #{endTime})")
     void addTimeUnity(TimeUnity timeUnity);
 
     @Select("delete from time_unity where id = #{id}")
