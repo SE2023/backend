@@ -1,4 +1,4 @@
-package com.se2023.backend.entity;
+package com.se2023.backend.entity.User;
 
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;

@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 public interface FacilityMapper {
 
     //添加设施
-    @Select("insert into facility (name, sportsCentreId, status, type) values (#{name}, #{sportsCentreId},#{status}, #{type})")
+    @Select("insert into facility (name, sportsCentreId, status, type, manager_id, manager_tel) values (#{name}, #{sportsCentreId},#{status}, #{type}, #{manager_id}, #{manager_tel})")
     void addFacility(Facility facility);
 
     //删除设施

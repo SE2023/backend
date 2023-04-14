@@ -1,6 +1,6 @@
 package com.se2023.backend.mapper;
 
-import com.se2023.backend.entity.Membership;
+import com.se2023.backend.entity.Membership.Membership;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
