@@ -18,9 +18,16 @@ public class Coupon {
     @TableId(type = IdType.AUTO)
     Integer id;
     Integer user_id;
-    Date create_time;
-    Date expire_time;
+    String create_time;
+    String expire_time;
     Double discount;
+
+    public Coupon(Integer user_id, String create_time, String expire_time, Double discount) {
+        this.user_id = user_id;
+        this.create_time = create_time;
+        this.expire_time = expire_time;
+        this.discount = discount;
+    }
 
     public Integer getId() {
         return id;
@@ -38,19 +45,19 @@ public class Coupon {
         this.user_id = user_id;
     }
 
-    public Date getCreate_time() {
+    public String getCreate_time() {
         return create_time;
     }
 
-    public void setCreate_time(Date create_time) {
+    public void setCreate_time(String create_time) {
         this.create_time = create_time;
     }
 
-    public Date getExpire_time() {
+    public String getExpire_time() {
         return expire_time;
     }
 
-    public void setExpire_time(Date expire_time) {
+    public void setExpire_time(String expire_time) {
         this.expire_time = expire_time;
     }
 

@@ -8,8 +8,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.se2023.backend.config.EncryptionWithKeyConfig;
+import com.se2023.backend.entity.Coupon.Coupon;
 import com.se2023.backend.entity.Email.Email;
 import com.se2023.backend.entity.User.User;
+import com.se2023.backend.mapper.CouponMapper;
 import com.se2023.backend.mapper.EmailMapper;
 import com.se2023.backend.mapper.UserMapper;
 import com.se2023.backend.utils.MailService;
@@ -19,10 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Api(value="User",tags = "User Management")
 @RestController
@@ -30,14 +29,16 @@ public class UserController {
     private final UserMapper userMapper;
     private final EmailMapper emailMapper;
     private final MailService mailService;
+    private final CouponMapper couponMapper;
 
     private final int EXPIRE_DATE = 60 * 60 * 1000;
 
     @Autowired
-    public UserController(UserMapper userMapper, EmailMapper emailMapper, MailService mailService) {
+    public UserController(UserMapper userMapper, EmailMapper emailMapper, MailService mailService, CouponMapper couponMapper) {
         this.userMapper = userMapper;
         this.emailMapper = emailMapper;
         this.mailService = mailService;
+        this.couponMapper=couponMapper;
     }
 
 
@@ -318,4 +319,6 @@ public class UserController {
             return new JsonResult(500, null, "Failed to delete the user.", "failed");
         }
     }
+
+
 }

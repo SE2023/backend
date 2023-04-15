@@ -22,8 +22,8 @@ public class User {
     String confirmCode;
     String role;
     Integer membership;
-
     Integer balance;
+
 
     public String getUsername() {
         return username;
