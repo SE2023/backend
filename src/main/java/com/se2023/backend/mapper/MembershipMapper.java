@@ -1,6 +1,6 @@
 package com.se2023.backend.mapper;
 
-import com.se2023.backend.entity.Membership;
+import com.se2023.backend.entity.Membership.Membership;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -28,10 +28,13 @@ public interface MembershipMapper {
     @Update("update membership set balance=#{remain} where user_id=#{user_id} ")
     void consumeBalance(Integer user_id, double remain);
 
+
     @Select("select * from membership")
     List <Map<String,Object>> queryAllMembership();
 
     @Select("select * from membership where user_id = #{user_id}")
+
 //    Map<String,Object> queryMembership(Integer user_id);
     Membership queryMembership(Integer user_id);
+
 }

@@ -1,4 +1,4 @@
-package com.se2023.backend.entity;
+package com.se2023.backend.entity.Email;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

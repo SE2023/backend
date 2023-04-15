@@ -1,6 +1,5 @@
 package com.se2023.backend.controller;
 
-import com.se2023.backend.entity.User;
 import com.se2023.backend.utils.JsonResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

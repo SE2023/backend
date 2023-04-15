@@ -1,7 +1,7 @@
 package com.se2023.backend.controller;
 
-import com.se2023.backend.entity.Membership;
-import com.se2023.backend.entity.User;
+import com.se2023.backend.entity.Membership.Membership;
+import com.se2023.backend.entity.User.User;
 import com.se2023.backend.mapper.MembershipMapper;
 import com.se2023.backend.mapper.UserMapper;
 import com.se2023.backend.utils.JsonResult;
@@ -51,6 +51,7 @@ public class MembershipController {
                 Membership member=new Membership(user_id,create_time,expire_time,balance);
                 membershipMapper.addMemebrship(member);
                 return new JsonResult(0, member,"Successfully join in the membership!", "success");
+
             }
             else{
                 System.out.println(membershipMapper.queryMembership(user_id));
