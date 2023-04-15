@@ -1,4 +1,4 @@
-package com.se2023.backend.entity;
+package com.se2023.backend.entity.User;
 
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -22,8 +22,8 @@ public class User {
     String confirmCode;
     String role;
     Integer membership;
-
     Integer balance;
+
 
     public String getUsername() {
         return username;

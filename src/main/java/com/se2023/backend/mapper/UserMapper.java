@@ -1,10 +1,8 @@
 package com.se2023.backend.mapper;
 
-import com.se2023.backend.entity.User;
+import com.se2023.backend.entity.User.User;
 import org.apache.ibatis.annotations.*;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Mapper

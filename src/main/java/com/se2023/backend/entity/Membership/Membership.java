@@ -1,4 +1,4 @@
-package com.se2023.backend.entity;
+package com.se2023.backend.entity.Membership;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;

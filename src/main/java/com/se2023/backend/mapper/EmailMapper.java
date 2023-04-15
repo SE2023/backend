@@ -1,6 +1,6 @@
 package com.se2023.backend.mapper;
 
-import com.se2023.backend.entity.Email;
+import com.se2023.backend.entity.Email.Email;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
