@@ -43,4 +43,9 @@ public class FacilityController{
         facilityMapper.updateFacilityById(id, facility);
         return new JsonResult(0, null, "Update facility by id", "success");
     }
+
+    @GetMapping("/facilities/{type}")
+    public JsonResult getFacilitiesByType(@PathVariable("type") String type){
+        return new JsonResult(0, facilityMapper.getFacilitiesByType(type), "Get facilities by type", "success");
+    }
 }
