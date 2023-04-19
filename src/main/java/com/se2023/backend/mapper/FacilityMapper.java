@@ -23,4 +23,7 @@ public interface FacilityMapper {
 
     @Select("update facility set name = #{facility.name}, sportsCentreId = #{facility.sportsCentreId}, status = #{facility.status}, type = #{facility.type} where id = #{id}")
     void updateFacilityById(Integer id, Facility facility);
+
+    @Select("select * from facility where type = #{type}")
+    Facility[] getFacilitiesByType(String type);
 }
