@@ -20,7 +20,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.spring.web.json.Json;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Api(value="User",tags = "User Management")
@@ -319,6 +323,26 @@ public class UserController {
             return new JsonResult(500, null, "Failed to delete the user.", "failed");
         }
     }
+
+    @PostMapping(value="/user/upload/")
+    public JsonResult uploadIcon( @RequestParam("file") MultipartFile file){
+
+        if(file.isEmpty()){ //若文件选择为空,就上传失败
+            return new JsonResult(400,null,"No icon is selected","failed");
+        }else{
+            System.out.println(file);
+            //file.getBytes();
+            return new JsonResult(0,null,"Success to upload icon.","success");
+
+        }
+
+
+    }
+
+
+
+
+
 
 
 }
