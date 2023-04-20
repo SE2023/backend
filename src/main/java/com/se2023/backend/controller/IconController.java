@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
-import static sun.security.util.KnownOIDs.ContentType;
+//import static sun.security.util.KnownOIDs.ContentType;
 
 
 @Api(value="Icon", tags="Icon management")
