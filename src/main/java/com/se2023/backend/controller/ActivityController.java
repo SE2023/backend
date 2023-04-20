@@ -70,11 +70,20 @@ public class ActivityController {
         return new JsonResult(0, activitiesWithTime, "Get activities with time", "success");
     }
 
+    @GetMapping("/activity/{id}")
+    public JsonResult getActivityById(@PathVariable("id") Integer id){
+        //根据id获取活动
+        Activity activity = activityMapper.getActivityById(id);
+        return new JsonResult(0, activity, "Get activity by id", "success");
+    }
+
     @GetMapping("/activity/facility/{id}")
     public JsonResult getActivityByFacility(@PathVariable("id") Integer id){
         //根据设施获取活动
         Activity[] activity_list = activityMapper.getActivityByFacilityId(id);
         ArrayList<JSONObject> result = new ArrayList<>();
+        System.out.println(id);
+        System.out.println(activity_list.length);
         for (Activity activity : activity_list) {
             //根据活动id获取时间单元id
             int activityId = activity.getId();
@@ -96,6 +105,7 @@ public class ActivityController {
                 break;
             }
         }
+        System.out.println(result);
         return new JsonResult(0, result, "Get activity by facility", "success");
     }
 }
