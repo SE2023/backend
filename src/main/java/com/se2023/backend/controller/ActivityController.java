@@ -75,6 +75,8 @@ public class ActivityController {
         //根据设施获取活动
         Activity[] activity_list = activityMapper.getActivityByFacilityId(id);
         ArrayList<JSONObject> result = new ArrayList<>();
+        System.out.println(id);
+        System.out.println(activity_list.length);
         for (Activity activity : activity_list) {
             //根据活动id获取时间单元id
             int activityId = activity.getId();
@@ -96,6 +98,7 @@ public class ActivityController {
                 break;
             }
         }
+        System.out.println(result);
         return new JsonResult(0, result, "Get activity by facility", "success");
     }
 }
