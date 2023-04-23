@@ -3,10 +3,7 @@ package com.se2023.backend.controller;
 import com.se2023.backend.entity.Others.TimeUnity;
 import com.se2023.backend.mapper.TimeUnityMapper;
 import com.se2023.backend.utils.JsonResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class TimeUnityController {
@@ -22,5 +19,17 @@ public class TimeUnityController {
         timeUnityMapper.addTimeUnity(timeUnity);
         Integer id = timeUnityMapper.getTimeUnityId(timeUnity);
         return new JsonResult(0, id, "Add time unity", "success");
+    }
+
+    @GetMapping("/timeUnity/{id}")
+    public JsonResult getTimeUnityById(@PathVariable("id") Integer id){
+        //获取某个时间单元的信息
+        return new JsonResult(0, timeUnityMapper.getTimeUnityById(id), "Get time unity by id", "success");
+    }
+
+    @GetMapping("/timeUnity/{date}/{activity_id}")
+    public JsonResult getTimeUnity(@PathVariable("date") String date, @PathVariable("activity_id") Integer activity_id){
+        //获取某个活动的某一天的时间单元
+        return new JsonResult(0, timeUnityMapper.getTimeUnityBYDateAndActivity(date, activity_id), "Get time unity", "success");
     }
 }

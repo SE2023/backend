@@ -77,6 +77,24 @@ public class ActivityController {
         return new JsonResult(0, activity, "Get activity by id", "success");
     }
 
+    @GetMapping("/activity/date/{date}/activity/{activityId}")
+    public JsonResult getTimeByDateAndActivity(@PathVariable("date") String date, @PathVariable("activityId") Integer activityId){
+        //根据日期和活动id获取时间单元
+        Integer[] UnityId = TimeUnityMapper.getTimeUnityByActivity(activityId);
+        //根据时间单元id获取时间单元
+        TimeUnity timeUnity = TimeUnityMapper.getTimeUnityById(UnityId[0]);
+        //筛选日期相同的时间单元，存到一个数组里
+        ArrayList<TimeUnity> timeUnity_list = new ArrayList<>();
+        for (Integer integer : UnityId) {
+            TimeUnity timeUnity1 = TimeUnityMapper.getTimeUnityById(integer);
+            if (timeUnity1.getDate().equals(date)) {
+                timeUnity_list.add(timeUnity1);
+            }
+        }
+        return new JsonResult(0, timeUnity_list, "Get time by date and activity", "success");
+    }
+
+
     @GetMapping("/activity/facility/{id}")
     public JsonResult getActivityByFacility(@PathVariable("id") Integer id){
         //根据设施获取活动
