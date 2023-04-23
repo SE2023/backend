@@ -32,4 +32,10 @@ public interface TimeUnityMapper {
 
     @Select("select id from time_unity where date = #{date} and startTime = #{startTime} and endTime = #{endTime}")
     Integer getTimeUnityId(TimeUnity timeUnity);
+
+    @Select("select id from time_unity where date = #{date} and activityId = #{activityId}")
+    Integer[] getTimeUnityBYDateAndActivity(String date, Integer activityId);
+
+    @Select("select timeUnityId from activity_time where activityId = #{activityId}")
+    Integer[] getTimeUnityByActivity(Integer activityId);
 }
