@@ -23,6 +23,10 @@ public class FacilityController{
 
     @GetMapping("/facility")
     public JsonResult getFacility(){
+        // 打印所有设施
+        for (Facility facility : facilityMapper.getFacility()) {
+            System.out.println(facility);
+        }
         return new JsonResult(0, facilityMapper.getFacility(), "Get facility", "success");
     }
 
