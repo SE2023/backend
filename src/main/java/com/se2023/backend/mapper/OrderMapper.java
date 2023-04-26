@@ -36,8 +36,6 @@ public interface OrderMapper {
     @Select("insert into orders (name, activityId, userId, status, remark, payMoney, time) values (#{name}, #{activityId}, #{userId}, #{status}, #{remark}, #{payMoney}, #{time})")
     void addOrder(Order order);
 
-
-
     @Select("delete from orders where id = #{id}")
     void deleteOrder(Integer id);
 

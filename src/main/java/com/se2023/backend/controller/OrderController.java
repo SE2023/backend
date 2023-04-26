@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.se2023.backend.entity.Activity.Activity;
 import com.se2023.backend.entity.Activity.Facility;
+import com.se2023.backend.entity.Membership.Membership;
 import com.se2023.backend.entity.Others.TimeUnity;
 import com.se2023.backend.entity.User.User;
 import com.se2023.backend.mapper.*;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.se2023.backend.entity.Order.Order;
 import com.se2023.backend.utils.JsonResult;
+
+import java.util.Map;
+
 import static com.se2023.backend.utils.EncryptionWithKey.decodeToken;
 
 @RestController
@@ -24,15 +28,17 @@ public class OrderController {
     private final ActivityMapper activityMapper;
     private final TimeUnityMapper timeUnityMapper;
     private final FacilityMapper facilityMapper;
+    private final MembershipMapper membershipMapper;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
-    public OrderController(OrderMapper orderMapper, UserMapper userMapper, ActivityMapper activityMapper, TimeUnityMapper timeUnityMapper, FacilityMapper facilityMapper) {
+    public OrderController(OrderMapper orderMapper, UserMapper userMapper, ActivityMapper activityMapper, TimeUnityMapper timeUnityMapper, FacilityMapper facilityMapper, MembershipMapper membershipMapper) {
         this.orderMapper = orderMapper;
         this.userMapper = userMapper;
         this.activityMapper = activityMapper;
         this.timeUnityMapper = timeUnityMapper;
         this.facilityMapper = facilityMapper;
+        this.membershipMapper = membershipMapper;
     }
 
     @GetMapping("/order")
@@ -107,9 +113,30 @@ public class OrderController {
         //将时间转化成字符串
         order.setTime(dateTime.toString());
         //设置订单状态维unpaid
-        order.setStatus("unpaid");
-        order.setRemark("unpaid");
+        order.setStatus("paid");
+        order.setRemark("paid");
+        //设置订单名称
+        Activity activity = activityMapper.getActivityById(activityId);
+        order.setName(activity.getName());
         orderMapper.addOrder(order);
-        return new JsonResult(0, null, "Add order", "success");
+        return new JsonResult(0, order.getId(), "Add order", "success");
     }
+
+    // 目前此函数不能用，后期需要改
+//    @PutMapping("/order/{orderId}/paid/{pay}")
+//    public JsonResult updateOrderStatus(@RequestBody Order order, @PathVariable("pay") Double payMoney, @PathVariable("orderId") Integer orderId) {
+//        //如果是会员，就减除余额
+//        User user = userMapper.queryUserById(order.getUserId());
+//        System.out.println(user);
+//        Integer userId = user.getId();
+//        if (user.getMembership() == 1) {
+//            Membership membership = membershipMapper.queryMembership(order.getUserId());
+//            membershipMapper.consumeBalance(userId, membership.getBalance()-payMoney);
+//        }
+//        System.out.println(orderId);
+//        //更新订单状态
+//        orderMapper.updateOrderStatus(orderId, "paid");
+//
+//        return new JsonResult(0, null, "Update order status", "success");
+//    }
 }
