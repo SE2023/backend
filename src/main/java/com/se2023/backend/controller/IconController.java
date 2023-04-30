@@ -6,7 +6,6 @@ import com.se2023.backend.mapper.UserMapper;
 import com.se2023.backend.utils.JsonResult;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -18,20 +17,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
-import static sun.security.util.KnownOIDs.ContentType;
+//import static sun.security.util.KnownOIDs.ContentType;
 
 
 @Api(value="Icon", tags="Icon management")
 @RestController
-public class IconController {
-    private final IconMapper iconMapper;
+public class  IconController {
+//    private final IconMapper iconMapper;
     private final UserMapper userMapper;
+    private final IconMapper iconMapper;
 
     @Autowired
     public IconController(UserMapper userMapper, IconMapper iconMapper){
         this.iconMapper=iconMapper;
         this.userMapper=userMapper;
     }
+
 
     @PostMapping("/icon/load/{id}")
     public JsonResult loadIcon(@RequestParam("file")MultipartFile file, @PathVariable("id") Integer id){
