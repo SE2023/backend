@@ -57,6 +57,7 @@ public class CouponController {
     @GetMapping(value="/coupon/{user_id}")
     public JsonResult queryCouponByUser(@PathVariable("user_id") Integer user_id){
         List<Coupon> targets=couponMapper.queryCouponByUser(user_id);
+        System.out.println(targets);
         if(targets==null){
             return new JsonResult(0,null,"No coupons","success");
         }else{
