@@ -139,4 +139,10 @@ public class OrderController {
 //
 //        return new JsonResult(0, null, "Update order status", "success");
 //    }
+
+    @DeleteMapping("/order/{id}")
+    public JsonResult deleteOrder(@PathVariable("id") Integer id) {
+        orderMapper.deleteOrder(id);
+        return new JsonResult(0, null, "Delete order", "success");
+    }
 }
