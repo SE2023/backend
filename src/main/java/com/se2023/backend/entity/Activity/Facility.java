@@ -23,7 +23,7 @@ public class Facility {
 
     String type;
 
-    Integer manager_id;
+    String manager_name;
 
     String manager_tel;
 }

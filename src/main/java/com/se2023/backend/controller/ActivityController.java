@@ -70,11 +70,38 @@ public class ActivityController {
         return new JsonResult(0, activitiesWithTime, "Get activities with time", "success");
     }
 
+    @GetMapping("/activity/{id}")
+    public JsonResult getActivityById(@PathVariable("id") Integer id){
+        //根据id获取活动
+        Activity activity = activityMapper.getActivityById(id);
+        return new JsonResult(0, activity, "Get activity by id", "success");
+    }
+
+    @GetMapping("/activity/date/{date}/activity/{activityId}")
+    public JsonResult getTimeByDateAndActivity(@PathVariable("date") String date, @PathVariable("activityId") Integer activityId){
+        //根据日期和活动id获取时间单元
+        Integer[] UnityId = TimeUnityMapper.getTimeUnityByActivity(activityId);
+        //根据时间单元id获取时间单元
+        TimeUnity timeUnity = TimeUnityMapper.getTimeUnityById(UnityId[0]);
+        //筛选日期相同的时间单元，存到一个数组里
+        ArrayList<TimeUnity> timeUnity_list = new ArrayList<>();
+        for (Integer integer : UnityId) {
+            TimeUnity timeUnity1 = TimeUnityMapper.getTimeUnityById(integer);
+            if (timeUnity1.getDate().equals(date)) {
+                timeUnity_list.add(timeUnity1);
+            }
+        }
+        return new JsonResult(0, timeUnity_list, "Get time by date and activity", "success");
+    }
+
+
     @GetMapping("/activity/facility/{id}")
     public JsonResult getActivityByFacility(@PathVariable("id") Integer id){
         //根据设施获取活动
         Activity[] activity_list = activityMapper.getActivityByFacilityId(id);
         ArrayList<JSONObject> result = new ArrayList<>();
+        System.out.println(id);
+        System.out.println(activity_list.length);
         for (Activity activity : activity_list) {
             //根据活动id获取时间单元id
             int activityId = activity.getId();
@@ -96,6 +123,7 @@ public class ActivityController {
                 break;
             }
         }
+        System.out.println(result);
         return new JsonResult(0, result, "Get activity by facility", "success");
     }
 }

@@ -106,6 +106,16 @@ public class MembershipController {
         }
     }
 
+    @GetMapping(value="/membership/{id}")
+    public JsonResult queryMembershipById(@PathVariable("id") Integer id){
+        if(membershipMapper.queryMembership(id)==null){
+            return new JsonResult(400,null,"Invalid membership id.","failed");
+        }else{
+            Membership member= membershipMapper.queryMembership(id);
+            return new JsonResult(0,member,"Successfully get membership","success");
+        }
+    }
+
     @PostMapping(value="/membership/consume/{id}")
     public JsonResult consumeBalance(@PathVariable("id") Integer id,@RequestBody Map<String,Double> map){
         Double cost= map.get("cost");
