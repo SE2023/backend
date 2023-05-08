@@ -192,7 +192,7 @@ public class UserController {
             Date ex=new Date();
             ex.setTime(ex.getTime()+30*24*60*60*1000L );//优惠券默认保质期30天
             String expire_time=sdf.format(ex);
-            Coupon coupon=new Coupon(user_id,create_time,expire_time,30.0);
+            Coupon coupon=new Coupon(user_id,create_time,expire_time,5.0);
             couponMapper.addCoupon(coupon);
 
             return new JsonResult(0, user, "Registry Success", "success");

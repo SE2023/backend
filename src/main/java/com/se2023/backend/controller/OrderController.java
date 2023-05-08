@@ -79,8 +79,8 @@ public class OrderController {
     }
 
     @PostMapping("/order")
-    public JsonResult addOrder(@RequestBody Order order, @RequestHeader("Authorization") String token,@PathVariable("userId") Integer user_id ) {
-        if(orderMapper.getOrdersByUserId(user_id)==null){
+    public JsonResult addOrder(@RequestBody Order order, @RequestHeader("Authorization") String token) {
+        if(orderMapper.getOrdersByUserId(order.getUserId())==null){
             return new JsonResult(1,null,"you have already booked the same order","failed");
         }else{
             //新建一个订单，这里没有考虑人数上限的问题
@@ -102,12 +102,13 @@ public class OrderController {
                 currentPeople+=1;
                 //付钱
                 Double money=Double.parseDouble(order.getPayMoney());
-                Double balance=userMapper.queryUserById(user_id).getBalance();
+                Double balance=userMapper.queryUserById(order.getUserId()).getBalance();
                 if(money>balance){
                     return new JsonResult(1,null,"balance is not enough","fail");
                 }else{
                     Double left_money=balance-money;
-                    userMapper.updateBalance(user_id,left_money);
+                    System.out.println("left_money: " + left_money);
+                    userMapper.updateBalance(order.getUserId(),left_money);
                 }
             }
             //同时人数上限+1, 记录在redis
@@ -126,8 +127,8 @@ public class OrderController {
             //将时间转化成字符串
             order.setTime(dateTime.toString());
             //设置订单状态维unpaid
-            order.setStatus("paid");
-            order.setRemark("paid");
+            order.setStatus(order.getStatus());
+            order.setRemark(order.getRemark());
             //设置订单名称
             Activity activity = activityMapper.getActivityById(activityId);
             order.setName(activity.getName());
