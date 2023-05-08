@@ -64,26 +64,5 @@ public class  IconController {
     }
 
 
-    @GetMapping("/icon/upload/{id}")
-    public JsonResult getImage(@PathVariable("id") Integer id) {
-        // 从数据库中根据图片id获取图片的byte[]数据
-        String iconBase=iconMapper.queryIconById(id);
-        byte[] icon = Base64.getDecoder().decode(iconBase);
-
-        // 将byte[]数据转换为InputStream
-        InputStream inputStream = new ByteArrayInputStream(icon);
-
-        // 设置响应头，指定图片的Content-Type和Content-Disposition
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG); // 设置图片类型
-        headers.setContentDisposition(ContentDisposition.inline().filename("image.jpg").build()); // 设置图片文件名
-
-        // 创建InputStreamResource对象，将InputStream和响应头一起作为参数传入
-        InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
-
-        // 创建ResponseEntity对象，将InputStreamResource和响应头一起作为参数传入
-        //return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
-        return new JsonResult(0,inputStreamResource,"Upload the icon","success");
-    }
 
 }
