@@ -36,7 +36,7 @@ public class PayController {
         String orderAmount = orderMapper.getOrderById(orderId).getPayMoney();
         Integer amount = Integer.parseInt(orderAmount.split("/$")[1]);
         //从用户中获取到用户余额
-        Integer userBalance = userMapper.queryUserById(userId).getBalance();
+        Double userBalance = userMapper.queryUserById(userId).getBalance();
         //将用户余额减去订单金额
         userMapper.updateBalance(userId, userBalance - amount);
         return new JsonResult(0, null, "Pay", "success");
