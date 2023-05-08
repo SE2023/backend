@@ -25,6 +25,7 @@ import springfox.documentation.spring.web.json.Json;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Api(value="User",tags = "User Management")
@@ -182,7 +183,18 @@ public class UserController {
             String code_password = SecureUtil.md5(user.getPassword());
             user.setPassword(code_password);
             user.setRole("Consumer");
+            //添加用户
             userMapper.addUser(user);
+            //给新用户优惠券
+            Integer user_id=userMapper.queryUserByUsername(username_submit).getId();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            String create_time = sdf.format(new Date());
+            Date ex=new Date();
+            ex.setTime(ex.getTime()+30*24*60*60*1000L );//优惠券默认保质期30天
+            String expire_time=sdf.format(ex);
+            Coupon coupon=new Coupon(user_id,create_time,expire_time,30.0);
+            couponMapper.addCoupon(coupon);
+
             return new JsonResult(0, user, "Registry Success", "success");
         } catch (Exception e) {
             System.out.println(e);
