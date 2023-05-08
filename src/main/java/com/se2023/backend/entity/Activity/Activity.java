@@ -25,6 +25,5 @@ public class Activity {
 
     String status;
 
-
     Integer capacity;
 }

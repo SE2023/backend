@@ -36,43 +36,33 @@ public class  IconController {
 
     @PostMapping("/icon/load/{id}")
     public JsonResult loadIcon(@RequestParam("file")MultipartFile file, @PathVariable("id") Integer id){
+        System.out.println("get in");
         if(file.isEmpty()){
             return new JsonResult(400,null,"No icon is selected","failed");
         }else{
-            System.out.println(file);
+            byte[] tar_icon = new byte[0];
             try {
-                byte[] tar_icon = file.getBytes();
-                String icon = Base64.getEncoder().encodeToString(tar_icon);
-                Icon target_icon=new Icon(id,icon);
-                iconMapper.addIcon(target_icon);
-                return new JsonResult(0,null,"Success to load icons for user","success");
+                tar_icon = file.getBytes();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            String icon = Base64.getEncoder().encodeToString(tar_icon);
+            Icon target_icon=new Icon(id,icon);
+                //add icon to database
+            if(iconMapper.queryIconById(id)!=null){
+                iconMapper.updateIcon(id,icon);
+                System.out.println("update successfully");
+                return new JsonResult(0,file,"Upload the icon","success");
+            }
+            iconMapper.addIcon(target_icon);
+            System.out.println("add successfully");
+            return new JsonResult(0,file,"Upload the icon","success");
+
+                //return new JsonResult(0,null,"Success to load icons for user","success");
+
         }
     }
 
 
-    @GetMapping("/icon/upload/{id}")
-    public JsonResult getImage(@PathVariable("id") Integer id) {
-        // 从数据库中根据图片id获取图片的byte[]数据
-        String iconBase=iconMapper.queryIconById(id);
-        byte[] icon = Base64.getDecoder().decode(iconBase);
-
-        // 将byte[]数据转换为InputStream
-        InputStream inputStream = new ByteArrayInputStream(icon);
-
-        // 设置响应头，指定图片的Content-Type和Content-Disposition
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG); // 设置图片类型
-        headers.setContentDisposition(ContentDisposition.inline().filename("image.jpg").build()); // 设置图片文件名
-
-        // 创建InputStreamResource对象，将InputStream和响应头一起作为参数传入
-        InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
-
-        // 创建ResponseEntity对象，将InputStreamResource和响应头一起作为参数传入
-        //return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
-        return new JsonResult(0,inputStreamResource,"Upload the icon","success");
-    }
 
 }
