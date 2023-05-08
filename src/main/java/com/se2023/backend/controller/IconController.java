@@ -36,19 +36,30 @@ public class  IconController {
 
     @PostMapping("/icon/load/{id}")
     public JsonResult loadIcon(@RequestParam("file")MultipartFile file, @PathVariable("id") Integer id){
+        System.out.println("get in");
         if(file.isEmpty()){
             return new JsonResult(400,null,"No icon is selected","failed");
         }else{
-            System.out.println(file);
+            byte[] tar_icon = new byte[0];
             try {
-                byte[] tar_icon = file.getBytes();
-                String icon = Base64.getEncoder().encodeToString(tar_icon);
-                Icon target_icon=new Icon(id,icon);
-                iconMapper.addIcon(target_icon);
-                return new JsonResult(0,null,"Success to load icons for user","success");
+                tar_icon = file.getBytes();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            String icon = Base64.getEncoder().encodeToString(tar_icon);
+            Icon target_icon=new Icon(id,icon);
+                //add icon to database
+            if(iconMapper.queryIconById(id)!=null){
+                iconMapper.updateIcon(id,icon);
+                System.out.println("update successfully");
+                return new JsonResult(0,file,"Upload the icon","success");
+            }
+            iconMapper.addIcon(target_icon);
+            System.out.println("add successfully");
+            return new JsonResult(0,file,"Upload the icon","success");
+
+                //return new JsonResult(0,null,"Success to load icons for user","success");
+
         }
     }
 
