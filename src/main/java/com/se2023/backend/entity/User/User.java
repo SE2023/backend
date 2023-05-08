@@ -22,7 +22,7 @@ public class User {
     String confirmCode;
     String role;
     Integer membership;
-    Integer balance;
+    Double balance;
 
 
     public String getUsername() {

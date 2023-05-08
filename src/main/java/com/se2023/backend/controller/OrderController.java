@@ -79,47 +79,62 @@ public class OrderController {
     }
 
     @PostMapping("/order")
-    public JsonResult addOrder(@RequestBody Order order, @RequestHeader("Authorization") String token) {
-        //新建一个订单，这里没有考虑人数上限的问题
-        //先获取活动的id
-        Integer activityId = order.getActivityId();
-        //获取活动的capacity
-        Integer maxPeople = activityMapper.getCapacityByActivityId(activityId);
-        //获取当前人数
-        Integer currentPeople = (Integer)redisTemplate.opsForValue().get(activityId.toString());
-        //如果当前人数已经达到上限，就不创建订单
-        if (currentPeople == null) {
-            currentPeople = 0;
+    public JsonResult addOrder(@RequestBody Order order, @RequestHeader("Authorization") String token,@PathVariable("userId") Integer user_id ) {
+        if(orderMapper.getOrdersByUserId(user_id)==null){
+            return new JsonResult(1,null,"you have already booked the same order","failed");
+        }else{
+            //新建一个订单，这里没有考虑人数上限的问题
+            //先获取活动的id
+            Integer activityId = order.getActivityId();
+            //获取活动的capacity
+            Integer maxPeople = activityMapper.getCapacityByActivityId(activityId);
+            //获取当前人数
+            Integer currentPeople = (Integer)redisTemplate.opsForValue().get(activityId.toString());
+            //如果当前人数已经达到上限，就不创建订单
+            if (currentPeople == null) {
+                currentPeople = 0;
+            }
+            //如果当前人数没有达到上限，就创建订单
+            if (currentPeople >= maxPeople) {
+                return new JsonResult(1, null, "Add order", "fail");
+            } else {
+                //useramount+1
+                currentPeople+=1;
+                //付钱
+                Double money=Double.parseDouble(order.getPayMoney());
+                Double balance=userMapper.queryUserById(user_id).getBalance();
+                if(money>balance){
+                    return new JsonResult(1,null,"balance is not enough","fail");
+                }else{
+                    Double left_money=balance-money;
+                    userMapper.updateBalance(user_id,left_money);
+                }
+            }
+            //同时人数上限+1, 记录在redis
+            redisTemplate.opsForValue().set(activityId.toString(), currentPeople);
+            //创建订单
+            //先获取用户的id
+            //通过token获取用户的id
+            //使用SHA256对token解码
+            DecodedJWT jwt = decodeToken(token);
+            String username = jwt.getClaim("username").asString();
+            User user = userMapper.queryUserByUsername(username);
+            Integer userId = user.getId();
+            order.setUserId(userId);
+            //获取时间
+            DateTime dateTime = new DateTime();
+            //将时间转化成字符串
+            order.setTime(dateTime.toString());
+            //设置订单状态维unpaid
+            order.setStatus("paid");
+            order.setRemark("paid");
+            //设置订单名称
+            Activity activity = activityMapper.getActivityById(activityId);
+            order.setName(activity.getName());
+            orderMapper.addOrder(order);
+            return new JsonResult(0, order.getId(), "Add order", "success");
         }
-        //如果当前人数没有达到上限，就创建订单
-        if (currentPeople >= maxPeople) {
-            return new JsonResult(1, null, "Add order", "fail");
-        } else {
-            currentPeople = currentPeople + 1;
-        }
-        //同时人数上限+1, 记录在redis
-        redisTemplate.opsForValue().set(activityId.toString(), currentPeople);
-        //创建订单
-        //先获取用户的id
-        //通过token获取用户的id
-        //使用SHA256对token解码
-        DecodedJWT jwt = decodeToken(token);
-        String username = jwt.getClaim("username").asString();
-        User user = userMapper.queryUserByUsername(username);
-        Integer userId = user.getId();
-        order.setUserId(userId);
-        //获取时间
-        DateTime dateTime = new DateTime();
-        //将时间转化成字符串
-        order.setTime(dateTime.toString());
-        //设置订单状态维unpaid
-        order.setStatus("paid");
-        order.setRemark("paid");
-        //设置订单名称
-        Activity activity = activityMapper.getActivityById(activityId);
-        order.setName(activity.getName());
-        orderMapper.addOrder(order);
-        return new JsonResult(0, order.getId(), "Add order", "success");
+
     }
 
     // 目前此函数不能用，后期需要改
