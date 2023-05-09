@@ -16,6 +16,9 @@ public interface ActivityMapper {
     @Select("insert into activity (name, facilityId, price, note, userAmount, status, capacity) values (#{name}, #{facilityId}, #{price}, #{note}, #{userAmount}, #{status}, #{capacity})")
     void addActivity(Activity activity);
 
+    @Select("select * from activity where name = #{name}")
+    Activity getActivityByName(String name);
+
     //删除活动
     @Select("delete from activity where id = #{id}")
     void deleteActivity();
@@ -23,7 +26,7 @@ public interface ActivityMapper {
     Activity[] getActivityByFacilityId(Integer facilityId);
 
     @Select("select timeUnityId from activity_time where activityId = #{activityId}")
-    Integer getTimeUnityIdByActivityId(Integer activityId);
+    Integer[] getTimeUnityIdByActivityId(Integer activityId);
 
     @Select("select * from activity where id = #{id}")
     Activity getActivityById(Integer id);
@@ -38,7 +41,7 @@ public interface ActivityMapper {
     Activity[] getActivity();
 
     @Select("select * from activity where facilityId = #{facilityId} and status = #{status} and userAmount = #{userAmount} and name = #{name}")
-    Integer getActivityId(Activity activity);
+    Integer[] getActivityId(Activity activity);
 
     @Select("insert into activity_time (activityId, timeUnityId, peopleAmount) values (#{activityId}, #{timeUnityId}, #{peopleAmount})")
     void addActivityTimeUnity(Integer activityId, Integer timeUnityId, Integer peopleAmount);

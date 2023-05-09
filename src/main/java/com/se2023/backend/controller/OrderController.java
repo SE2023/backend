@@ -101,10 +101,17 @@ public class OrderController {
                 //useramount+1
                 currentPeople+=1;
                 //付钱
+                Double balance;
                 Double money=Double.parseDouble(order.getPayMoney());
-                Double balance=userMapper.queryUserById(order.getUserId()).getBalance();
+                Membership membership = membershipMapper.queryMembership(order.getUserId());
+                if (membership != null) {
+                    balance = membership.getBalance();
+                    money *= 0.8;
+                } else {
+                    balance=userMapper.queryUserById(order.getUserId()).getBalance();
+                }
                 if(money>balance){
-                    return new JsonResult(1,null,"balance is not enough","fail");
+                    return new JsonResult(1,"balance is not enough","balance is not enough","fail");
                 }else{
                     Double left_money=balance-money;
                     System.out.println("left_money: " + left_money);
@@ -132,6 +139,7 @@ public class OrderController {
             //设置订单名称
             Activity activity = activityMapper.getActivityById(activityId);
             order.setName(activity.getName());
+            System.out.println("success: " + order);
             orderMapper.addOrder(order);
             return new JsonResult(0, order.getId(), "Add order", "success");
         }

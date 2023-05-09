@@ -33,9 +33,14 @@ public class ActivityController {
 
     @PostMapping("/activity/{timeUnityId}")
     public JsonResult addActivity(@PathVariable("timeUnityId") Integer timeUnityId, @RequestBody Activity activity){
+        System.out.println("timeUnityId: "+ timeUnityId);
         //新建活动的时候，需要有一个时间单元的id，这个id是从前端传过来的
-        activityMapper.addActivity(activity);
-        Integer activityId = activityMapper.getActivityId(activity);
+        //
+        if (activityMapper.getActivityByName(activity.getName()) == null) {
+            activityMapper.addActivity(activity);
+        }
+        Integer[] activityIds = activityMapper.getActivityId(activity);
+        Integer activityId = activityIds[0];
         activityMapper.addActivityTimeUnity(activityId, timeUnityId, activity.getUserAmount());
         return new JsonResult(0, activity, "Add activity", "success");
     }
@@ -81,43 +86,62 @@ public class ActivityController {
     public JsonResult getTimeByDateAndActivity(@PathVariable("date") String date, @PathVariable("activityId") Integer activityId){
         //根据日期和活动id获取时间单元
         Integer[] UnityId = TimeUnityMapper.getTimeUnityByActivity(activityId);
+
+
         //根据时间单元id获取时间单元
         TimeUnity timeUnity = TimeUnityMapper.getTimeUnityById(UnityId[0]);
         //筛选日期相同的时间单元，存到一个数组里
         ArrayList<TimeUnity> timeUnity_list = new ArrayList<>();
         for (Integer integer : UnityId) {
+            System.out.println("unityId " + integer);
             TimeUnity timeUnity1 = TimeUnityMapper.getTimeUnityById(integer);
             if (timeUnity1.getDate().equals(date)) {
                 timeUnity_list.add(timeUnity1);
             }
         }
+        System.out.println("timeUnity_list" + timeUnity_list);
         return new JsonResult(0, timeUnity_list, "Get time by date and activity", "success");
     }
 
 
     @GetMapping("/activity/facility/{id}")
-    public JsonResult getActivityByFacility(@PathVariable("id") Integer id){
+    public JsonResult getActivityByFacility(@PathVariable("id") Integer id) {
         //根据设施获取活动
         Activity[] activity_list = activityMapper.getActivityByFacilityId(id);
         ArrayList<JSONObject> result = new ArrayList<>();
         System.out.println(id);
         System.out.println(activity_list.length);
+        System.out.println("====================");
+        System.out.print(Arrays.toString(activity_list));
         for (Activity activity : activity_list) {
             //根据活动id获取时间单元id
             int activityId = activity.getId();
-            System.out.println(activityId);
+            System.out.println("activityId, " + activityId);
             try {
-                int timeUnityId = activityMapper.getTimeUnityIdByActivityId(activityId);
+                System.out.println("here");
+//                Integer[] timeUnityIds = activityMapper.getTimeUnityIdByActivityId(activityId);
+//                Integer timeUnityId = timeUnityIds[0];
+//                System.out.println("timeUnityIds" + Arrays.toString(timeUnityIds));
                 //根据时间单元id获取开始时间和结束时间
-                TimeUnity timeUnity = TimeUnityMapper.getTimeUnityById(timeUnityId);
-                String startTime = timeUnity.getStartTime();
-                String endTime = timeUnity.getEndTime();
-                String date = timeUnity.getDate();
+//                TimeUnity timeUnity = TimeUnityMapper.getTimeUnityById(timeUnityId);
+//                String startTime = timeUnity.getStartTime();
+//                String endTime = timeUnity.getEndTime();
+//                String date = timeUnity.getDate();
                 JSONObject ac = new JSONObject();
+
+                // 如果ac中的activity的name和activity的id相同，就不加入
+                boolean flag = false;
+                for (JSONObject jsonObject : result) {
+                    if (jsonObject.get("activity").equals(activity.getName())) {
+                        flag = true;
+                        break;
+                    }
+                }
                 ac.put("activity", activity);
-                ac.put("starttime", startTime);
-                ac.put("endtime", endTime);
-                ac.put("date", date);
+//                ac.put("starttime", startTime);
+//                ac.put("endtime", endTime);
+//                ac.put("date", date);
+                System.out.println("ac" + ac);
                 result.add(ac);
             } catch (Exception e) {
                 break;
