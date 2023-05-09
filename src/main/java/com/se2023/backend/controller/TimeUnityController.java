@@ -15,6 +15,15 @@ public class TimeUnityController {
 
     @PostMapping("/timeUnity")
     public JsonResult addTimeUnity(@RequestBody TimeUnity timeUnity){
+        System.out.println("timeUnity: " + timeUnity);
+        System.out.println("date: " + timeUnity.getDate());
+        System.out.println("startTime: " + timeUnity.getStartTime());
+        System.out.println("endTime: " + timeUnity.getEndTime());
+        // 如果时间单元已经存在，就不添加
+        TimeUnity[] timeUnities = timeUnityMapper.getTimeUnityByDateTime(timeUnity.getDate().toString(), timeUnity.getStartTime().toString(), timeUnity.getEndTime().toString());
+        if (timeUnities.length != 0){
+            return new JsonResult(0, timeUnities[0].getId(), "Add time unity", "Time unity already exists");
+        }
         //新建时间单元，这应该在创建活动之前完成，前端因此要发两次请求
         timeUnityMapper.addTimeUnity(timeUnity);
         Integer id = timeUnityMapper.getTimeUnityId(timeUnity);
